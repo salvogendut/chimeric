@@ -1,0 +1,5 @@
+baseURL = 'https://salvogendut.github.io/chimeric/'
+canonifyURLs = true
+languageCode = 'en-us'
+title = 'Chimeric'
+theme = 'hugo-theme-terminal'
