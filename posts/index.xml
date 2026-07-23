@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Posts on Chimeric</title>
+		<link>https://salvogendut.github.io/chimeric/posts/</link>
+		<description>Recent content in Posts on Chimeric</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Wed, 22 Jul 2026 20:37:56 +0200</lastBuildDate>
+		
+			<atom:link href="https://salvogendut.github.io/chimeric/posts/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>onechipbook wifi and GEOBENCH</title>
+				<link>https://salvogendut.github.io/chimeric/posts/onechipbook-wifi-and-geobench/</link>
+				<pubDate>Wed, 22 Jul 2026 20:37:56 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/onechipbook-wifi-and-geobench/</guid>
+				<description>&lt;h2 id=&#34;photos&#34;&gt;Photos&lt;/h2&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://salvogendut.github.io/chimeric/images/20260722_194203.jpg&#34; alt=&#34;GEOBENCH browser&#34;&gt;&#xA;&lt;em&gt;GEOBENCH browser&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://salvogendut.github.io/chimeric/images/20260722_194021.jpg&#34; alt=&#34;GEOBENCH telnet&#34;&gt;&#xA;&lt;em&gt;GEOBENCH telnet&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;I recently updated the ESP-01S Wi-Fi module inside my OneChipBook. The firmware and tools I used came from the links in Oduvaldo Pavan Junior&amp;rsquo;s YouTube video:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=uoaiEamWUUg&#34;&gt;Oduvaldo Pavan Junior&amp;rsquo;s OneChipBook ESP8266 video&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;The package included Espressif&amp;rsquo;s Windows Flash Download Tool, but I did not use it in the end. The current &lt;code&gt;.exe&lt;/code&gt; did not run correctly on my Windows 7 machine, so I flashed the ESP-01S directly from Linux using Espressif&amp;rsquo;s command-line tool, &lt;a href=&#34;https://docs.espressif.com/projects/esptool/en/latest/esp8266/&#34;&gt;&lt;code&gt;esptool.py&lt;/code&gt;&lt;/a&gt;.&#xA;You will also need the correct firmware from here, as the one in the video has a problem where it won&amp;rsquo;t save the WiFi settings:&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Complexity over 10000</title>
+				<link>https://salvogendut.github.io/chimeric/posts/complexity-over-10000/</link>
+				<pubDate>Sat, 18 Jul 2026 18:41:13 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/complexity-over-10000/</guid>
+				<description>&lt;p&gt;Dealing with my new pet project &amp;lsquo;NixBench&amp;rsquo; a sort of Wayland-based desktop for&#xA;NetBSD (probably portable to other platforms as well). The level of layering and&#xA;complexity modern *nix desktops have reached due to historical reasons is ridiculous.&#xA;For every application you need to take into account the native layer, the GTK compatibility one&#xA;the X.org/Xwayland one. When there is an issue and things don&amp;rsquo;t work as expected is usually&#xA;a problem of plumbing between all these layers.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>To the Sky and beyond</title>
+				<link>https://salvogendut.github.io/chimeric/posts/to-the-sky-and-beyond/</link>
+				<pubDate>Sat, 11 Jul 2026 08:16:02 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/to-the-sky-and-beyond/</guid>
+				<description>&lt;p&gt;Half jokingly I started the endeavour of having a proper&#xA;browser running under GEOBENCH and ta-da it&amp;rsquo;s ready!!! Hammering down some issues&#xA;here and there, properly caching HTML is not an easy task on an 8-bitter and hopefully&#xA;it will work well with retro proxies too. Half jokingly I thought this would be the&#xA;first browser to run on the PCW proper. Will the world ever notice? haha&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>AI or not AI?</title>
+				<link>https://salvogendut.github.io/chimeric/posts/ai-or-not-ai/</link>
+				<pubDate>Wed, 08 Jul 2026 08:05:06 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/ai-or-not-ai/</guid>
+				<description>&lt;ul&gt;&#xA;&lt;li&gt;Hey , you know, you can ask an AI agent to take over this stuff and it will help you rebuild or port it over to your&#xA;target architecture very quickly! -&lt;/li&gt;&#xA;&lt;li&gt;I don&amp;rsquo;t use AI. LOL -&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;This is the kind of reaction most people in the development community still has about using the AI tools to do their work.&#xA;I think it is a decision I can respect but , in my opinion, is not a decision that has been thought through and through.&#xA;It is, so to speak, a knee-jerk reaction and I can totally understand why. Let&amp;rsquo;s say you have spent a good chunk of your&#xA;life doing development in , say, assembler or C or even something more obscure like Delphi or Pascal you probably will&#xA;feel disoriented right now. The world has changed and it has changed fast. Knowledge has changed too.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Porting GEOBENCH to the PCW</title>
+				<link>https://salvogendut.github.io/chimeric/posts/porting-geobench-to-the-pcw/</link>
+				<pubDate>Tue, 07 Jul 2026 10:02:08 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/porting-geobench-to-the-pcw/</guid>
+				<description>&lt;p&gt;I have though long and hard wether it would be worth porting GEOBENCH to a new architecture/computer and&#xA;realized that the perfect platform for that would be the Amstrad PCW , provided that you add some &amp;lsquo;modern&amp;rsquo;&#xA;hardware such as a DK&amp;rsquo;sound card [ DK&amp;rsquo;sound clone ] (&lt;a href=&#34;https://pcwwiki2.com/doku.php?id=hardware:perifericos:dksound&#34;&gt;https://pcwwiki2.com/doku.php?id=hardware:perifericos:dksound&lt;/a&gt;) (Mostly for the joystick/mouse capabilities) and a PerryFi wifi modem to use&#xA;telnet and BBSes. Another thing that would make it perfect is the fact that, in fact, we have a simil-CGA&#xA;mode that can use up to 4 different colors (Again using an external card). Challenge accepted&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>What is chimeric software?</title>
+				<link>https://salvogendut.github.io/chimeric/posts/what-is-chimeric-software/</link>
+				<pubDate>Mon, 06 Jul 2026 23:15:25 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/what-is-chimeric-software/</guid>
+				<description>&lt;p&gt;&lt;img src=&#34;https://salvogendut.github.io/chimeric/images/chimeric.png&#34; alt=&#34;Chimeric&#34;&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;what-is-chimeric-software&#34;&gt;What is Chimeric Software?&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;Chimeric software&lt;/strong&gt; is a concept born from the retrocomputing community that embraces the capabilities of modern software engineering&#xA;while asking a simple but fascinating question:&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;What if?&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;What if a particular piece of software had existed decades earlier?&#xA;What if it had been designed to run on the computers of the 8-bit and 16-bit era?&#xA;What would it have looked like, how would it have behaved, and what compromises or innovations would its creators have made?&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>
