@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cpc464">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#121416">
+<title>Javascript 1984</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="theme-retro-crt.css">
+<link rel="stylesheet" href="theme-sapporo.css">
+<link rel="stylesheet" href="theme-sapporo-dark.css">
+<link rel="stylesheet" href="theme-cpc464.css">
+</head>
+<body>
+<main class="workbench">
+  <header class="masthead">
+    <div class="brand-lockup">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <div>
+        <p class="eyebrow">Amstrad CPC emulator</p>
+        <h1>Javascript <strong>1984</strong></h1>
+      </div>
+    </div>
+    <div class="masthead-meta">
+      <span>WASM / 50 HZ</span>
+      <div class="theme-picker">
+        <button id="themeButton" class="theme-button" type="button"
+                aria-haspopup="true" aria-expanded="false" aria-controls="themeMenu">
+          Theme: <strong id="themeName">Default</strong>
+        </button>
+        <div id="themeMenu" class="theme-menu" role="menu" hidden>
+          <button type="button" role="menuitemradio" aria-checked="false" data-theme="retro-crt">
+            <i class="theme-swatch swatch-crt" aria-hidden="true"></i>
+            <span><strong>Retro CRT</strong><small>Phosphor terminal</small></span>
+          </button>
+          <button type="button" role="menuitemradio" aria-checked="false" data-theme="sapporo">
+            <i class="theme-swatch swatch-sapporo" aria-hidden="true"></i>
+            <span><strong>Sapporo</strong><small>Transit computer</small></span>
+          </button>
+          <button type="button" role="menuitemradio" aria-checked="false" data-theme="sapporo-dark">
+            <i class="theme-swatch swatch-sapporo-dark" aria-hidden="true"></i>
+            <span><strong>Sapporo Dark</strong><small>Solarized transit</small></span>
+          </button>
+          <button type="button" role="menuitemradio" aria-checked="true" data-theme="cpc464">
+            <i class="theme-swatch swatch-cpc464" aria-hidden="true"></i>
+            <span><strong>CPC464</strong><small>GT65 workstation</small></span>
+          </button>
+        </div>
+      </div>
+      <span class="power-state"><i id="ledPower" class="led led-green"></i> System</span>
+    </div>
+  </header>
+
+  <section class="receiver" aria-label="Javascript 1984 emulator">
+    <div class="receiver-top">
+      <div class="model-bank">
+        <label for="model">Machine</label>
+        <div class="select-shell">
+          <select id="model">
+            <option value="0">CPC 6128</option>
+            <option value="1">CPC 6128 Plus</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="display-panel" role="status" aria-live="polite">
+        <span class="display-label">System monitor</span>
+        <span id="status">Loading emulator...</span>
+      </div>
+
+      <div class="activity-bank" aria-label="Activity indicators">
+        <div><i id="ledA" class="led led-red"></i><span>Drive A</span></div>
+        <div><i id="ledInput" class="led led-amber"></i><span>Input</span></div>
+        <div><i id="ledAudio" class="led led-green"></i><span>Audio</span></div>
+      </div>
+    </div>
+
+    <div id="screenStage" class="screen-stage">
+      <img class="screen-brand" src="brand-1984.png" alt="1984"
+           width="512" height="512" draggable="false">
+      <span id="buildIdentity" class="screen-build-info">Version loading...</span>
+      <div id="screenFrame" class="screen-frame">
+        <div class="screen-glass">
+          <canvas id="screen" width="768" height="576" tabindex="0"
+                  aria-label="Amstrad CPC display"></canvas>
+          <div class="scanline-overlay" aria-hidden="true"></div>
+          <div id="screenHint" class="screen-hint">Click display for keyboard</div>
+          <div id="dropHint" class="drop-hint">Drop DSK, CPR or SNA media here</div>
+        </div>
+        <div class="screen-badge">
+          <span>RGB monitor</span>
+          <span id="screenMode">768 x 576 / Sharp</span>
+        </div>
+      </div>
+      <div class="display-dial-bank" aria-label="CRT picture adjustments">
+        <label class="display-dial-control">
+          <span>Scanlines</span>
+          <span class="display-dial-knob"><i id="scanlineNeedle"></i>
+            <input id="scanlineStrength" type="range" min="0" max="95" step="5" value="15" aria-label="Scanline visibility">
+          </span>
+          <strong id="scanlineValue">15%</strong>
+        </label>
+        <label class="display-dial-control">
+          <span>Brightness</span>
+          <span class="display-dial-knob"><i id="brightnessNeedle"></i>
+            <input id="crtBrightness" type="range" min="50" max="100" step="5" value="100" aria-label="Display brightness">
+          </span>
+          <strong id="brightnessValue">100%</strong>
+        </label>
+        <label class="display-dial-control">
+          <span>Contrast</span>
+          <span class="display-dial-knob"><i id="contrastNeedle"></i>
+            <input id="crtContrast" type="range" min="50" max="150" step="5" value="100" aria-label="Display contrast">
+          </span>
+          <strong id="contrastValue">100%</strong>
+        </label>
+        <label class="display-dial-control display-dial-red">
+          <span>Red</span>
+          <span class="display-dial-knob"><i id="redNeedle"></i>
+            <input id="crtRed" type="range" min="50" max="150" step="5" value="100" aria-label="Red channel gain">
+          </span>
+          <strong id="redValue">100%</strong>
+        </label>
+        <label class="display-dial-control display-dial-green">
+          <span>Green</span>
+          <span class="display-dial-knob"><i id="greenNeedle"></i>
+            <input id="crtGreen" type="range" min="50" max="150" step="5" value="100" aria-label="Green channel gain">
+          </span>
+          <strong id="greenValue">100%</strong>
+        </label>
+        <label class="display-dial-control display-dial-blue">
+          <span>Blue</span>
+          <span class="display-dial-knob"><i id="blueNeedle"></i>
+            <input id="crtBlue" type="range" min="50" max="150" step="5" value="100" aria-label="Blue channel gain">
+          </span>
+          <strong id="blueValue">100%</strong>
+        </label>
+      </div>
+    </div>
+
+    <div class="control-deck">
+      <section class="deck-module transport-module" aria-labelledby="transport-title">
+        <div class="module-heading">
+          <span id="transport-title">Transport</span>
+          <small>System</small>
+        </div>
+        <div class="transport-row">
+          <button id="reset" class="deck-key danger-key" type="button">
+            <span class="key-icon">RST</span><small>Reset</small>
+          </button>
+          <button id="fullscreen" class="deck-key" type="button">
+            <span class="key-icon">FULL</span><small>Screen</small>
+          </button>
+          <button id="fitScreen" class="deck-key" type="button">
+            <span class="key-icon">FIT</span><small>Size</small>
+          </button>
+          <button id="expansion" class="deck-key expansion-key" type="button">
+            <span class="key-icon">AUX</span><small>Expansion</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="deck-module media-module" aria-labelledby="media-title">
+        <div class="module-heading">
+          <span id="media-title">Media deck</span>
+          <small>Virtual transport</small>
+        </div>
+        <div class="media-slots">
+          <article id="diskSlot" class="media-slot">
+            <div class="cassette-window" aria-hidden="true">
+              <i></i><span>DSK</span><i></i>
+            </div>
+            <div class="media-copy">
+              <strong>Drive A</strong>
+              <span id="diskname">No disk loaded</span>
+            </div>
+            <div class="media-actions">
+              <label class="small-key" for="diskfile">Load</label>
+              <button id="diskEject" class="small-key" type="button" disabled>Eject</button>
+            </div>
+            <input class="visually-hidden" type="file" id="diskfile" accept=".dsk,.DSK">
+          </article>
+
+          <article id="cartSlot" class="media-slot media-slot-disabled">
+            <div class="cassette-window cartridge-window" aria-hidden="true">
+              <span>CPR</span>
+            </div>
+            <div class="media-copy">
+              <strong>Cartridge</strong>
+              <span id="cartname">Select CPC 6128 Plus</span>
+            </div>
+            <div class="media-actions">
+              <label id="cartLoad" class="small-key" for="cartfile" aria-disabled="true">Load</label>
+              <button id="cartDefault" class="small-key" type="button" disabled>Default</button>
+            </div>
+            <input class="visually-hidden" type="file" id="cartfile" accept=".cpr,.CPR" disabled>
+          </article>
+
+          <article class="media-slot snapshot-slot">
+            <div class="cassette-window snapshot-window" aria-hidden="true">
+              <span>SNA</span>
+            </div>
+            <div class="media-copy">
+              <strong>Snapshots</strong>
+              <span id="snapshotname">Machine state</span>
+            </div>
+            <div class="media-actions snapshot-actions">
+              <label class="small-key" for="snapshotfile">Load SNA</label>
+              <button id="snapshotSave" class="small-key" type="button">Save SNA</button>
+            </div>
+            <input class="visually-hidden" type="file" id="snapshotfile" accept=".sna,.SNA">
+          </article>
+        </div>
+      </section>
+
+      <section class="deck-module input-module" aria-labelledby="input-title">
+        <div class="module-heading">
+          <span id="input-title">Input channel</span>
+          <small>Port 1</small>
+        </div>
+        <div class="input-switches">
+          <label class="toggle-control">
+            <input type="checkbox" id="joytoggle" checked>
+            <span class="toggle-track"><i></i></span>
+            <span><strong>Joystick</strong><small>USB gamepad</small></span>
+          </label>
+          <label class="toggle-control">
+            <input type="checkbox" id="mousetoggle">
+            <span class="toggle-track"><i></i></span>
+            <span><strong>Mouse</strong><small>AMX pointer</small></span>
+          </label>
+        </div>
+        <button id="joydetect" class="wide-key" type="button">Detect controller</button>
+        <div class="input-readout">
+          <span id="joystatus">Joystick: waiting for gamepad...</span>
+          <span id="joymatrix">CPC joystick: idle</span>
+          <span id="mousestatus">Mouse: disabled</span>
+        </div>
+      </section>
+
+      <section class="deck-module screen-module" aria-labelledby="screen-title">
+        <div class="module-heading">
+          <span id="screen-title">Picture</span>
+          <small>Display control</small>
+        </div>
+        <div class="dial-row">
+          <div class="rotary" aria-hidden="true"><i id="sizeNeedle"></i></div>
+          <label for="screenScale">
+            <span>Display size</span>
+            <strong id="scaleValue">100%</strong>
+          </label>
+          <input id="screenScale" type="range" min="70" max="100" step="5" value="100">
+        </div>
+        <label class="toggle-control compact-toggle">
+          <input type="checkbox" id="pixelToggle" checked>
+          <span class="toggle-track"><i></i></span>
+          <span><strong>Sharp pixels</strong><small>Nearest-neighbour scaling</small></span>
+        </label>
+        <button id="colorMode" class="wide-key color-mode-key" type="button" aria-pressed="false">
+          <i class="mode-lamp" aria-hidden="true"></i>
+          <span><strong id="colorModeName">Color display</strong><small>Switch to green monochrome</small></span>
+        </button>
+      </section>
+    </div>
+
+    <div class="cpc464-keyboard" data-keyboard-open="false">
+      <div class="cpc-keyboard-bar">
+        <span>Optional on-screen keyboard</span>
+        <button id="cpcKeyboardToggle" type="button" aria-expanded="false"
+                aria-controls="cpcKeyboardKeys tapeDeckMock">Show keyboard</button>
+      </div>
+
+      <div id="cpcKeyboardKeys" class="cpc464-keybed" role="group"
+           aria-label="Amstrad CPC keyboard" hidden>
+        <div class="cpc-key-row cpc-key-row-number">
+          <button type="button" class="cpc-key cpc-key-red" data-scancode="41">ESC</button>
+          <button type="button" class="cpc-key" data-scancode="30">1</button>
+          <button type="button" class="cpc-key" data-scancode="31">2</button>
+          <button type="button" class="cpc-key" data-scancode="32">3</button>
+          <button type="button" class="cpc-key" data-scancode="33">4</button>
+          <button type="button" class="cpc-key" data-scancode="34">5</button>
+          <button type="button" class="cpc-key" data-scancode="35">6</button>
+          <button type="button" class="cpc-key" data-scancode="36">7</button>
+          <button type="button" class="cpc-key" data-scancode="37">8</button>
+          <button type="button" class="cpc-key" data-scancode="38">9</button>
+          <button type="button" class="cpc-key" data-scancode="39">0</button>
+          <button type="button" class="cpc-key" data-scancode="45">-</button>
+          <button type="button" class="cpc-key" data-scancode="46">^</button>
+          <button type="button" class="cpc-key cpc-key-blue" data-scancode="76">CLR</button>
+          <button type="button" class="cpc-key cpc-key-blue" data-scancode="42">DEL</button>
+        </div>
+        <div class="cpc-key-row">
+          <button type="button" class="cpc-key cpc-key-wide" data-scancode="43">TAB</button>
+          <button type="button" class="cpc-key" data-scancode="20">Q</button>
+          <button type="button" class="cpc-key" data-scancode="26">W</button>
+          <button type="button" class="cpc-key" data-scancode="8">E</button>
+          <button type="button" class="cpc-key" data-scancode="21">R</button>
+          <button type="button" class="cpc-key" data-scancode="23">T</button>
+          <button type="button" class="cpc-key" data-scancode="28">Y</button>
+          <button type="button" class="cpc-key" data-scancode="24">U</button>
+          <button type="button" class="cpc-key" data-scancode="12">I</button>
+          <button type="button" class="cpc-key" data-scancode="18">O</button>
+          <button type="button" class="cpc-key" data-scancode="19">P</button>
+          <button type="button" class="cpc-key" data-scancode="53">@</button>
+          <button type="button" class="cpc-key" data-scancode="47">[</button>
+          <button type="button" class="cpc-key cpc-key-green cpc-key-wide" data-scancode="40">RETURN</button>
+        </div>
+        <div class="cpc-key-row">
+          <button type="button" class="cpc-key cpc-key-blue cpc-key-wide" data-scancode="57">CAPS</button>
+          <button type="button" class="cpc-key" data-scancode="4">A</button>
+          <button type="button" class="cpc-key" data-scancode="22">S</button>
+          <button type="button" class="cpc-key" data-scancode="7">D</button>
+          <button type="button" class="cpc-key" data-scancode="9">F</button>
+          <button type="button" class="cpc-key" data-scancode="10">G</button>
+          <button type="button" class="cpc-key" data-scancode="11">H</button>
+          <button type="button" class="cpc-key" data-scancode="13">J</button>
+          <button type="button" class="cpc-key" data-scancode="14">K</button>
+          <button type="button" class="cpc-key" data-scancode="15">L</button>
+          <button type="button" class="cpc-key" data-scancode="52">;</button>
+          <button type="button" class="cpc-key" data-scancode="51">:</button>
+          <button type="button" class="cpc-key" data-scancode="48">]</button>
+          <button type="button" class="cpc-key" data-scancode="49" aria-label="Backslash">\</button>
+          <button type="button" class="cpc-key cpc-key-green" data-scancode="88">ENTER</button>
+        </div>
+        <div class="cpc-key-row">
+          <button type="button" class="cpc-key cpc-key-wide" data-scancode="225" data-modifier aria-pressed="false">SHIFT</button>
+          <button type="button" class="cpc-key" data-scancode="29">Z</button>
+          <button type="button" class="cpc-key" data-scancode="27">X</button>
+          <button type="button" class="cpc-key" data-scancode="6">C</button>
+          <button type="button" class="cpc-key" data-scancode="25">V</button>
+          <button type="button" class="cpc-key" data-scancode="5">B</button>
+          <button type="button" class="cpc-key" data-scancode="17">N</button>
+          <button type="button" class="cpc-key" data-scancode="16">M</button>
+          <button type="button" class="cpc-key" data-scancode="54">,</button>
+          <button type="button" class="cpc-key" data-scancode="55">.</button>
+          <button type="button" class="cpc-key" data-scancode="56">/</button>
+          <button type="button" class="cpc-key cpc-key-blue" data-scancode="82">UP</button>
+          <button type="button" class="cpc-key cpc-key-blue" data-scancode="81">DOWN</button>
+          <button type="button" class="cpc-key cpc-key-wide" data-scancode="225" data-modifier aria-pressed="false">SHIFT</button>
+        </div>
+        <div class="cpc-key-row cpc-key-row-space">
+          <button type="button" class="cpc-key cpc-key-blue" data-scancode="224" data-modifier aria-pressed="false">CTRL</button>
+          <button type="button" class="cpc-key cpc-key-red" data-scancode="226" data-modifier aria-pressed="false">COPY</button>
+          <button type="button" class="cpc-key cpc-key-space" data-scancode="44">SPACE</button>
+          <button type="button" class="cpc-key cpc-key-blue" data-scancode="80">LEFT</button>
+          <button type="button" class="cpc-key cpc-key-blue" data-scancode="79">RIGHT</button>
+        </div>
+      </div>
+
+      <section id="tapeDeckMock" class="cpc464-tape-deck" data-future-control="tape"
+               aria-hidden="true" hidden>
+        <div class="tape-deck-heading">
+          <strong>DATA RECORDER</strong>
+          <span>FUTURE TAPE SUPPORT</span>
+        </div>
+        <div class="tape-door">
+          <span class="tape-label">CPC DATA</span>
+          <div class="tape-reels"><i></i><b></b><i></i></div>
+          <span class="tape-window-line"></span>
+        </div>
+        <div class="tape-counter">000</div>
+        <div class="tape-transport">
+          <span>REC</span><span>PLAY</span><span>REW</span>
+          <span>F.FWD</span><span>STOP</span><span>PAUSE</span>
+        </div>
+      </section>
+    </div>
+
+    <footer class="receiver-footer">
+      <span>1984 browser edition</span>
+      <span>Keyboard active when the display is focused</span>
+    </footer>
+  </section>
+</main>
+
+<aside id="mlMonitor" class="ml-monitor" data-open="false"
+       aria-label="Machine-language monitor">
+  <button id="mlMonitorToggle" class="ml-monitor-toggle" type="button"
+          aria-expanded="false" aria-controls="mlMonitorPanel">
+    <span>ML</span> Monitor
+  </button>
+  <section id="mlMonitorPanel" class="ml-monitor-panel" hidden>
+    <header class="ml-monitor-head">
+      <div>
+        <span class="ml-kicker">Z80 diagnostic console / DAP 1.71.0</span>
+        <strong>ML MONITOR</strong>
+      </div>
+      <div class="ml-run-state">
+        <i id="mlStateLamp" class="ml-state-lamp"></i>
+        <span id="mlState">RUN</span>
+      </div>
+    </header>
+
+    <div class="ml-register-bank" aria-label="Z80 registers">
+      <span>AF <b id="mlRegAF">0000</b></span>
+      <span>BC <b id="mlRegBC">0000</b></span>
+      <span>DE <b id="mlRegDE">0000</b></span>
+      <span>HL <b id="mlRegHL">0000</b></span>
+      <span>IX <b id="mlRegIX">0000</b></span>
+      <span>IY <b id="mlRegIY">0000</b></span>
+      <span>SP <b id="mlRegSP">0000</b></span>
+      <span>PC <b id="mlRegPC">0000</b></span>
+    </div>
+
+    <section class="ml-module ml-transport" aria-labelledby="mlTransportTitle">
+      <div class="ml-module-head">
+        <strong id="mlTransportTitle">Execution</strong>
+        <span id="mlStopReason">Live processor</span>
+      </div>
+      <div class="ml-transport-keys">
+        <button id="mlPause" type="button" class="ml-key ml-key-red"><b>BREAK</b><small>Pause</small></button>
+        <button id="mlContinue" type="button" class="ml-key ml-key-green"><b>CONT</b><small>Continue</small></button>
+        <button id="mlStepIn" type="button" class="ml-key"><b>IN</b><small>Step in</small></button>
+        <button id="mlNext" type="button" class="ml-key"><b>OVER</b><small>Step over</small></button>
+        <button id="mlStepOut" type="button" class="ml-key"><b>OUT</b><small>Step out</small></button>
+        <button id="mlStepBack" type="button" class="ml-key ml-key-blue"><b>BACK</b><small>Step back</small></button>
+      </div>
+      <pre id="mlDisassembly" class="ml-readout ml-disassembly" aria-label="Disassembly">Waiting for core...</pre>
+    </section>
+
+    <section class="ml-module" aria-labelledby="mlBreakpointTitle">
+      <div class="ml-module-head">
+        <strong id="mlBreakpointTitle">Breakpoints</strong>
+        <span>16 channels</span>
+      </div>
+      <div class="ml-address-control">
+        <button type="button" class="ml-encoder" data-encoder="mlBreakpointAddress" data-delta="-1" aria-label="Previous breakpoint address">-</button>
+        <label>Address<input id="mlBreakpointAddress" value="0000" inputmode="text" maxlength="6"></label>
+        <button type="button" class="ml-encoder" data-encoder="mlBreakpointAddress" data-delta="1" aria-label="Next breakpoint address">+</button>
+        <button id="mlBreakpointAdd" type="button" class="ml-action">Set</button>
+      </div>
+      <div id="mlBreakpointList" class="ml-channel-list"><span class="ml-empty">No breakpoints armed</span></div>
+    </section>
+
+    <section class="ml-module" aria-labelledby="mlWatchTitle">
+      <div class="ml-module-head">
+        <strong id="mlWatchTitle">Label write detector</strong>
+        <span>Memory watch</span>
+      </div>
+      <div class="ml-watch-entry">
+        <label>Label<input id="mlWatchLabel" placeholder="player_x" maxlength="32"></label>
+        <label>Address<input id="mlWatchAddress" value="0000" inputmode="text" maxlength="6"></label>
+        <button id="mlWatchAdd" type="button" class="ml-action">Arm</button>
+      </div>
+      <div id="mlWatchList" class="ml-channel-list"><span class="ml-empty">No labels watched</span></div>
+      <pre id="mlWriteLog" class="ml-readout ml-write-log" aria-live="polite">Write events will appear here.</pre>
+    </section>
+
+    <section class="ml-module" aria-labelledby="mlMemoryTitle">
+      <div class="ml-module-head">
+        <strong id="mlMemoryTitle">Memory slice</strong>
+        <span>Mapped CPU view</span>
+      </div>
+      <div class="ml-address-control ml-memory-control">
+        <button type="button" class="ml-encoder" data-encoder="mlMemoryAddress" data-delta="-8" aria-label="Previous memory row">-</button>
+        <label>Address<input id="mlMemoryAddress" value="0000" inputmode="text" maxlength="6"></label>
+        <button type="button" class="ml-encoder" data-encoder="mlMemoryAddress" data-delta="8" aria-label="Next memory row">+</button>
+        <label>Length<input id="mlMemoryLength" type="number" min="1" max="256" value="32"></label>
+        <button id="mlMemoryRead" type="button" class="ml-action">Read</button>
+      </div>
+      <pre id="mlMemoryDump" class="ml-readout ml-memory-dump">0000  -- -- -- -- -- -- -- --</pre>
+      <label class="ml-byte-editor">Hex bytes
+        <textarea id="mlMemoryBytes" rows="3" spellcheck="false" placeholder="00 01 02 FF"></textarea>
+      </label>
+      <button id="mlMemoryWrite" type="button" class="ml-action ml-write-action">Write slice</button>
+    </section>
+
+    <footer id="mlMonitorMessage" class="ml-monitor-message" aria-live="polite">
+      Opened without pausing the CPC.
+    </footer>
+  </section>
+</aside>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="gamepad.js"></script>
+<script src="media-url.js"></script>
+<script src="ml-monitor.js"></script>
+<script src="dap.js"></script>
+<script src="6128.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

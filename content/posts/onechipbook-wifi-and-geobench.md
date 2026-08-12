@@ -16,6 +16,9 @@ draft: false
   - [Oduvaldo Pavan Junior's OneChipBook ESP8266 video](https://www.youtube.com/watch?v=uoaiEamWUUg)
 
   The package included Espressif's Windows Flash Download Tool, but I did not use it in the end. The current `.exe` did not run correctly on my Windows 7 machine, so I flashed the ESP-01S directly from Linux using Espressif's command-line tool, [`esptool.py`](https://docs.espressif.com/projects/esptool/en/latest/esp8266/).
+  You will also need the correct firmware from here, as the one in the video has a problem where it won't save the WiFi settings:
+
+  - [ Oduvaldo Pavan Junior's OneChipBook ESP8266 firmware](https://github.com/ducasp/MSX-Development/releases/download/ESPFW1.4/OCM-SM.UNAPI.PACK.1.5.zip)
 
   ## Opening the OneChipBook
 
@@ -85,15 +88,21 @@ draft: false
 
   After flashing, I switched the programmer back from PROG mode to UART mode and reinstalled the ESP-01S in the OneChipBook.
 
+  ## Prepare SDCARD
+
+  You need to copy all the files in the "OCM-SM.UNAPI.PACK.1.5/TO SDCARD ROOT (RAIZ CARTAO SD) RAM" folder to the root of your SDCARD (Format it to FAT16 first)
+  and of course, you will need to already have the necessary files to boot MSXDOS in it
+
   ## First Boot
 
   After powering on the OneChipBook, I saw several messages indicating that the ESP8266 firmware was being loaded.
 
   At first I could not find where the Wi-Fi configuration was supposed to be set. The useful tool turned out to be:
 
-  8266CFG.COM
+  CFG8266.COM
 
-  Running 8266CFG.COM scans for nearby Wi-Fi access points and allows the OneChipBook to connect to one.
+  Running CFG8266.COM scans for nearby Wi-Fi access points and allows the OneChipBook to connect to one.
+  You may want to also adjust the time server and timezone to reflect your area in AUTOEXE2.BAT
 
   ## Testing UNAPI Networking
 
@@ -110,7 +119,6 @@ draft: false
 
   GEOBENCH project links:
 
-  - GEOBENCH project: TODO: insert project URL
-  - GEOBENCH releases/downloads: TODO: insert releases URL
+  - [GEOBENCH project](https://github.com/salvogendut/geobench)
 
   This confirmed that the flashed ESP-01S firmware, the OneChipBook Wi-Fi interface, and the UNAPI networking stack were all working together successfully.
