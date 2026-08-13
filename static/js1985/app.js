@@ -26,6 +26,8 @@ const toastEl = $("toast");
 const ledPowerEl = $("ledPower");
 const ledAEl = $("ledA");
 const ledBEl = $("ledB");
+const pcwDriveLedAEl = $("pcwDriveLedA");
+const pcwDriveLedBEl = $("pcwDriveLedB");
 const ledInputEl = $("ledInput");
 const ledAudioEl = $("ledAudio");
 const ctx = canvas.getContext("2d");
@@ -216,7 +218,7 @@ create1985().then(m => {
   let nextAudioStart = 0;
   let prevGamepad = null;
   let joyEnabled = true;
-  let ledStateA = 0;
+  let driveActivityState = -1;
   const heldKeys = new Set();
   const virtualKeys = new Set();
   const latchedVirtualModifiers = new Set();
@@ -445,18 +447,34 @@ create1985().then(m => {
       showToast("Invalid server media URL");
       return;
     }
-    if (!media.disk) return;
+    if (!media.disk && !media.diskB) return;
 
     try {
-      const disk = await fetchServerMedia(media.disk, "disk");
-      mountDisk(disk.data, disk.name, "/server-disk.dsk", "a");
-      disknameAEl.textContent = disk.name;
-      diskEjectAEl.disabled = false;
-      if (media.autorun) {
+      const [diskA, diskB] = await Promise.all([
+        media.disk ? fetchServerMedia(media.disk, "Drive A disk") : null,
+        media.diskB ? fetchServerMedia(media.diskB, "Drive B disk") : null,
+      ]);
+
+      if (diskB) {
+        mountDisk(diskB.data, diskB.name, "/server-disk-b.dsk", "b");
+        disknameBEl.textContent = diskB.name;
+        diskEjectBEl.disabled = false;
+      }
+      if (diskA) {
+        mountDisk(diskA.data, diskA.name, "/server-disk-a.dsk", "a");
+        disknameAEl.textContent = diskA.name;
+        diskEjectAEl.disabled = false;
+
         m._poc_reset();
         m._poc_audio_reset();
         if (audioCtx) nextAudioStart = audioCtx.currentTime + 0.3;
         releaseAllJoy();
+
+        if (!media.autorun) {
+          setStatus("Drive A: " + diskA.name + " - booting");
+          showToast("Booting " + diskA.name + " from Drive A");
+          return;
+        }
         const rc = m.ccall(
           "poc_autorun",
           "number",
@@ -465,9 +483,12 @@ create1985().then(m => {
         );
         if (rc !== 0) throw new Error("invalid autorun command");
         setStatus(
-          "Drive A: " + disk.name + " - autorun " + media.autorun + " armed"
+          "Drive A: " + diskA.name + " - autorun " + media.autorun + " armed"
         );
         showToast("Autorun " + media.autorun + " armed");
+      } else {
+        setStatus("Drive B: " + diskB.name);
+        showToast("Disk loaded into Drive B");
       }
     } catch (error) {
       setStatus("Server media failed: " + error.message);
@@ -674,12 +695,17 @@ create1985().then(m => {
     else showToast("Use a DSK disk image");
   });
 
-  function updateLed() {
-    const on = m._poc_disk_motor();
-    if (on !== ledStateA) {
-      ledStateA = on;
-      ledAEl.classList.toggle("on", Boolean(on));
-    }
+  function updateDriveLeds() {
+    const activity = m._poc_disk_activity();
+    if (activity === driveActivityState) return;
+    driveActivityState = activity;
+
+    const driveAActive = Boolean(activity & 0x01);
+    const driveBActive = Boolean(activity & 0x02);
+    ledAEl.classList.toggle("on", driveAActive);
+    ledBEl.classList.toggle("on", driveBActive);
+    pcwDriveLedAEl.classList.toggle("on", driveAActive);
+    pcwDriveLedBEl.classList.toggle("on", driveBActive);
   }
 
   let lastFrame = 0;
@@ -689,7 +715,7 @@ create1985().then(m => {
       lastFrame += 20;
       scheduleAudio();
       pollGamepad();
-      updateLed();
+      updateDriveLeds();
     }
 
     const pixels = m.HEAPU32.subarray(framebuffer >> 2, (framebuffer >> 2) + W * H);
