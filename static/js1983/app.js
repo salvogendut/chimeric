@@ -992,8 +992,13 @@ create1983().then(m => {
       setStatus("MSX TCP/IP UNAPI could not be enabled");
   };
 
-  applySdMapperHardware(sdMapperEnabled);
-  applyUnapiHardware(unapiEnabled);
+  if (!startupMediaError && startupMedia.machine !== null) {
+    if (!reinit(startupMedia.machine))
+      startupMediaError = new Error("selected machine firmware is unavailable");
+  } else {
+    applySdMapperHardware(sdMapperEnabled);
+    applyUnapiHardware(unapiEnabled);
+  }
 
   async function fetchServerMedia(url, kind) {
     const name = JS1983Media.filenameFromUrl(url, kind);
@@ -1016,11 +1021,15 @@ create1983().then(m => {
     const hasMedia = Boolean(
       media.disk || media.cartridge || media.cartridge2 || media.sdA || media.sdB
     );
-    if (!hasMedia && media.extensions === null) return;
+    if (!hasMedia && media.extensions === null && media.machine === null) return;
 
     try {
-      if (media.disk && !m._poc_has_floppy() && !reinit(1))
-        throw new Error("could not select the NMS 8250 floppy profile");
+      if (media.disk && !m._poc_has_floppy()) {
+        if (media.machine !== null)
+          throw new Error("selected machine has no floppy controller");
+        if (!reinit(1))
+          throw new Error("could not select the NMS 8250 floppy profile");
+      }
 
       const [cartridge, cartridge2, disk, sdA, sdB] = await Promise.all([
         media.cartridge
@@ -1085,6 +1094,13 @@ create1983().then(m => {
         showToast("Booting with SD " + letter + ": " + card.name);
       } else if (cartridge || cartridge2) {
         showToast("Booting with server cartridge media");
+      } else if (media.machine !== null) {
+        setStatus(media.machine === 1
+          ? "Philips NMS 8250 ready - selected by URL"
+          : "MSX1 (C-BIOS) ready - selected by URL");
+        showToast(media.machine === 1
+          ? "Philips NMS 8250 selected"
+          : "MSX1 (C-BIOS) selected");
       } else {
         setStatus("URL extensions applied - machine reset");
         showToast("URL extensions applied");

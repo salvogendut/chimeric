@@ -25,6 +25,14 @@
     return value;
   }
 
+  function validateMachine(value) {
+    if (value === null) return null;
+    const machine = value.trim().toLowerCase();
+    if (machine === 'msx1' || machine === 'cbios') return 0;
+    if (machine === 'nms8250' || machine === 'msx2') return 1;
+    throw new Error('machine must be msx1 or nms8250');
+  }
+
   function validateExtensions(params) {
     if (!params.has('extensions')) return null;
     const value = params.get('extensions').trim();
@@ -51,6 +59,9 @@
   function parseStartupMedia(search, baseUrl) {
     const params = new URLSearchParams(search || '');
     const media = {
+      machine: validateMachine(
+        params.has('machine') ? params.get('machine') : null
+      ),
       disk: resolveHttpUrl(params.get('disk'), baseUrl, 'disk'),
       cartridge: resolveHttpUrl(params.get('cartridge'), baseUrl, 'cartridge'),
       cartridge2: resolveHttpUrl(params.get('cartridge2'), baseUrl, 'cartridge2'),
