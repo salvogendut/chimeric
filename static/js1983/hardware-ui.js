@@ -21,7 +21,8 @@
 
   function createPeripheralState() {
     let inputDevice = INPUT_JOYSTICK;
-    let extensions = [];
+    let cartridgeExtensions = [];
+    let portExtensions = [];
 
     return {
       setInputDevice(device) {
@@ -31,17 +32,25 @@
       getInputDevice() {
         return inputDevice;
       },
-      setExtensions(names) {
-        extensions = normalizeExtensions(names);
-        return [...extensions];
+      setCartridgeExtensions(names) {
+        cartridgeExtensions = normalizeExtensions(names);
+        return [...cartridgeExtensions];
       },
-      getExtensions() {
-        return [...extensions];
+      getCartridgeExtensions() {
+        return [...cartridgeExtensions];
+      },
+      setPortExtensions(names) {
+        portExtensions = normalizeExtensions(names);
+        return [...portExtensions];
+      },
+      getPortExtensions() {
+        return [...portExtensions];
       },
       cartridgeSlotOwner(slot) {
         if (slot !== 0 && slot !== 1)
           throw new Error('unsupported cartridge slot: ' + slot);
-        return slot === 1 && extensions.length ? extensions[0] : null;
+        return slot === 1 && cartridgeExtensions.length
+          ? cartridgeExtensions[0] : null;
       },
       cartridgeSlotAvailable(slot) {
         return this.cartridgeSlotOwner(slot) === null;

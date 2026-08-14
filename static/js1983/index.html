@@ -12,6 +12,98 @@
 <link rel="stylesheet" href="theme-sonyhb-f1xd.css">
 </head>
 <body>
+<div id="expansionBackdrop" class="expansion-backdrop" aria-hidden="true"></div>
+<aside id="expansionPanel" class="expansion-panel" role="dialog" aria-modal="true"
+       aria-labelledby="expansionTitle" aria-hidden="true">
+  <header class="expansion-panel-header">
+    <div>
+      <span>Auxiliary bus</span>
+      <h2 id="expansionTitle">Expansion bay</h2>
+    </div>
+    <button id="expansionClose" class="expansion-close" type="button"
+            aria-label="Close expansion bay"><i aria-hidden="true"></i></button>
+  </header>
+
+  <div class="expansion-device-list">
+    <section class="expansion-device sd-mapper-device" aria-labelledby="sdMapperTitle">
+      <div class="expansion-device-heading">
+        <span class="expansion-device-mark" aria-hidden="true">SD</span>
+        <div>
+          <h3 id="sdMapperTitle">SD Mapper V2</h3>
+          <span>Slot II / 512 KB RAM</span>
+        </div>
+      </div>
+      <div class="expansion-device-controls">
+        <label class="toggle-control expansion-device-toggle">
+          <input type="checkbox" id="sdMapperToggle">
+          <span class="toggle-track"><i></i></span>
+          <span><strong>Cartridge power</strong><small id="sdMapperState" aria-live="polite">Disabled</small></span>
+        </label>
+        <p class="firmware-note"><strong>Firmware</strong><span>Embedded Nextor 2.1.1</span></p>
+        <fieldset class="expansion-mode-field">
+          <legend>SD image access</legend>
+          <div class="segmented-control">
+            <label>
+              <input type="radio" name="sdAccessMode" value="readonly" checked>
+              <span>Read-only</span>
+            </label>
+            <label>
+              <input type="radio" name="sdAccessMode" value="readwrite">
+              <span>Read/write</span>
+            </label>
+          </div>
+        </fieldset>
+        <div class="extension-media-list">
+          <article id="sdSlotA" class="extension-media-slot">
+            <i id="sdLedA" class="extension-activity-lamp" aria-hidden="true"></i>
+            <div><strong>SD A</strong><span id="sdNameA">No image loaded</span></div>
+            <label class="extension-small-key" for="sdFileA">Load</label>
+            <button id="sdEjectA" class="extension-small-key" type="button" disabled>Eject</button>
+            <input class="visually-hidden" type="file" id="sdFileA"
+                   accept=".img,.IMG,.dsk,.DSK,.bin,.BIN">
+          </article>
+          <article id="sdSlotB" class="extension-media-slot">
+            <i id="sdLedB" class="extension-activity-lamp" aria-hidden="true"></i>
+            <div><strong>SD B</strong><span id="sdNameB">No image loaded</span></div>
+            <label class="extension-small-key" for="sdFileB">Load</label>
+            <button id="sdEjectB" class="extension-small-key" type="button" disabled>Eject</button>
+            <input class="visually-hidden" type="file" id="sdFileB"
+                   accept=".img,.IMG,.dsk,.DSK,.bin,.BIN">
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="expansion-device unapi-device" aria-labelledby="unapiTitle">
+      <div class="expansion-device-heading">
+        <span class="expansion-device-mark" aria-hidden="true">NET</span>
+        <div>
+          <h3 id="unapiTitle">MSX TCP/IP UNAPI</h3>
+          <span>Port-mapped / no cartridge slot</span>
+        </div>
+      </div>
+      <div class="expansion-device-controls">
+        <label class="toggle-control expansion-device-toggle">
+          <input type="checkbox" id="unapiToggle">
+          <span class="toggle-track"><i></i></span>
+          <span><strong>Network interface</strong><small id="unapiState" aria-live="polite">Disabled</small></span>
+        </label>
+        <label class="expansion-text-field" for="unapiEndpoint">
+          <span>Relay endpoint</span>
+          <input id="unapiEndpoint" type="url" inputmode="url"
+                 autocomplete="off" spellcheck="false"
+                 placeholder="wss://host/unapi">
+        </label>
+        <div class="relay-state" aria-live="polite">
+          <i id="unapiRelayLamp" aria-hidden="true"></i>
+          <span id="unapiRelayState">Relay disabled</span>
+        </div>
+        <p class="extension-help">The guest still needs the UNAPINET.COM driver. Browser traffic is carried through the restricted relay.</p>
+      </div>
+    </section>
+  </div>
+</aside>
+
 <main class="workbench">
   <header class="masthead">
     <div class="brand-lockup">
@@ -133,8 +225,9 @@
             <span class="key-icon">FIT</span><small>Size</small>
           </button>
           <button id="expansion" class="deck-key expansion-key" type="button"
-                  aria-pressed="false" title="Toggle expansion slot reservation">
-            <span class="key-icon">AUX</span><small>Extension</small>
+                  aria-expanded="false" aria-controls="expansionPanel"
+                  title="Open the expansion bay">
+            <span class="key-icon">AUX</span><small>Expansion</small>
           </button>
         </div>
       </section>
@@ -244,7 +337,7 @@
           <input id="screenScale" type="range" min="70" max="100" step="5" value="100">
         </div>
         <label class="toggle-control compact-toggle">
-          <input type="checkbox" id="pixelToggle" checked>
+          <input type="checkbox" id="pixelToggle">
           <span class="toggle-track"><i></i></span>
           <span><strong>Sharp pixels</strong><small>Nearest-neighbour scaling</small></span>
         </label>
@@ -388,6 +481,8 @@
 <script src="gamepad.js"></script>
 <script src="hardware-ui.js"></script>
 <script src="media-url.js"></script>
+<script src="unapi-relay-protocol.js"></script>
+<script src="unapi-bridge.js"></script>
 <script src="1983.js"></script>
 <script src="app.js"></script>
 </body>

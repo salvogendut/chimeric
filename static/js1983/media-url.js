@@ -25,17 +25,58 @@
     return value;
   }
 
+  function validateExtensions(params) {
+    if (!params.has('extensions')) return null;
+    const value = params.get('extensions').trim();
+    if (!value) return [];
+    const supported = new Set(['sdmapper', 'unapi']);
+    const extensions = [];
+    for (const item of value.split(',')) {
+      const extension = item.trim().toLowerCase();
+      if (!supported.has(extension))
+        throw new Error('unsupported extension: ' + (extension || '(empty)'));
+      if (!extensions.includes(extension)) extensions.push(extension);
+    }
+    return extensions;
+  }
+
+  function validateSdMode(value, hasImage) {
+    if (value === null) return null;
+    if (!hasImage) throw new Error('sdmode requires an sda or sdb URL');
+    if (value !== 'readonly' && value !== 'readwrite')
+      throw new Error('sdmode must be readonly or readwrite');
+    return value;
+  }
+
   function parseStartupMedia(search, baseUrl) {
     const params = new URLSearchParams(search || '');
     const media = {
       disk: resolveHttpUrl(params.get('disk'), baseUrl, 'disk'),
       cartridge: resolveHttpUrl(params.get('cartridge'), baseUrl, 'cartridge'),
       cartridge2: resolveHttpUrl(params.get('cartridge2'), baseUrl, 'cartridge2'),
+      sdA: resolveHttpUrl(params.get('sda'), baseUrl, 'sda'),
+      sdB: resolveHttpUrl(params.get('sdb'), baseUrl, 'sdb'),
+      extensions: validateExtensions(params),
       autorun: validateAutorun(params.get('autorun')),
     };
+    media.sdMode = validateSdMode(
+      params.has('sdmode') ? params.get('sdmode').trim().toLowerCase() : null,
+      Boolean(media.sdA || media.sdB)
+    );
     if (media.autorun && !media.disk)
       throw new Error('autorun requires a disk URL');
     return media;
+  }
+
+  function resolveStartupExtensions(media, current = {}) {
+    let sdMapper = Boolean(current.sdMapper);
+    let unapi = Boolean(current.unapi);
+    if (media.extensions !== null) {
+      sdMapper = media.extensions.includes('sdmapper');
+      unapi = media.extensions.includes('unapi');
+    }
+    if (media.sdA || media.sdB) sdMapper = true;
+    return { sdMapper, unapi };
   }
 
   function filenameFromUrl(value, fallback) {
@@ -50,5 +91,5 @@
     }
   }
 
-  return { parseStartupMedia, filenameFromUrl };
+  return { parseStartupMedia, resolveStartupExtensions, filenameFromUrl };
 }));
