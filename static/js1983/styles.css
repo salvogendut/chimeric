@@ -635,6 +635,9 @@ button.extension-small-key:disabled { opacity: .35; }
 .relay-state[data-state="error"] { color: #d78982; }
 .relay-state[data-state="error"] i { background: #c44c43; }
 .relay-state i.activity { background: #f5f5ef; box-shadow: 0 0 9px rgba(255,255,255,.9); }
+.relay-certificate-action { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; }
+.relay-certificate-action .extension-small-key { min-width: 112px; min-height: 30px; }
+.relay-certificate-action span { color: #777d78; font: 600 8px/1.4 ui-monospace, monospace; }
 .extension-help { margin: 0; color: #777d78; font: 600 8px/1.45 ui-monospace, monospace; }
 
 .sony-msx-keyboard { display: none; }

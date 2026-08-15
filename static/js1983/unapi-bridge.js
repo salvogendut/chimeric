@@ -63,6 +63,19 @@
     return url.href;
   }
 
+  function relayHealthEndpoint(value) {
+    const endpoint = validEndpoint(value);
+    if (!endpoint) throw new Error("No UNAPI relay endpoint");
+    const url = new URL(endpoint);
+    url.protocol = url.protocol === "wss:" ? "https:" : "http:";
+    url.username = "";
+    url.password = "";
+    url.pathname = "/healthz";
+    url.search = "";
+    url.hash = "";
+    return url.href;
+  }
+
   class UnapiBridge {
     constructor(options = {}) {
       this.WebSocketCtor = options.WebSocketCtor ||
@@ -523,6 +536,7 @@
     UnapiBridge,
     createBridge: options => new UnapiBridge(options),
     pageDefaultEndpoint,
+    relayHealthEndpoint,
     validEndpoint,
   };
 }));

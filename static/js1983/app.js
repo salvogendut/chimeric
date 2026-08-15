@@ -43,6 +43,8 @@ const unapiEndpointEl = $("unapiEndpoint");
 const unapiRelayStateEl = $("unapiRelayState");
 const unapiRelayStateWrapEl = unapiRelayStateEl.closest(".relay-state");
 const unapiRelayLampEl = $("unapiRelayLamp");
+const unapiCertificateEl = $("unapiCertificate");
+const unapiApi = globalThis.JS1983Unapi;
 const unapiBridge = globalThis.JS1983UnapiBridge;
 const ctx = canvas.getContext("2d");
 const VW = 768;
@@ -75,6 +77,7 @@ let sdMapperEnabled = false;
 let sdAccessMode = "readonly";
 let unapiEnabled = false;
 let unapiEndpoint = unapiBridge ? unapiBridge.endpoint : "";
+let unapiCertificateUrl = "";
 let applySdMapperHardware = () => {};
 let applyUnapiHardware = () => {};
 
@@ -171,6 +174,14 @@ function applyUnapiEndpoint(value, persist = true) {
   unapiEndpoint = value.trim();
   const accepted = Boolean(unapiBridge && unapiBridge.setEndpoint(unapiEndpoint));
   unapiEndpointEl.setAttribute("aria-invalid", String(!accepted));
+  unapiCertificateUrl = "";
+  if (accepted && unapiApi) {
+    try {
+      const healthUrl = unapiApi.relayHealthEndpoint(unapiEndpoint);
+      if (healthUrl.startsWith("https:")) unapiCertificateUrl = healthUrl;
+    } catch (_) {}
+  }
+  unapiCertificateEl.disabled = !unapiCertificateUrl;
   if (accepted && persist) {
     try { localStorage.setItem(UNAPI_ENDPOINT_STORAGE_KEY, unapiEndpoint); } catch (_) {}
   }
@@ -239,6 +250,14 @@ unapiToggleEl.addEventListener("change", () => {
 unapiEndpointEl.addEventListener("change", () => {
   if (!applyUnapiEndpoint(unapiEndpointEl.value, true))
     showToast("Invalid UNAPI relay endpoint");
+});
+unapiCertificateEl.addEventListener("click", () => {
+  if (!unapiCertificateUrl) {
+    showToast("Enter a valid secure WSS relay endpoint first");
+    return;
+  }
+  window.open(unapiCertificateUrl, "_blank", "noopener,noreferrer");
+  showToast("Approve the relay certificate, then return; reconnection is automatic");
 });
 
 try {
