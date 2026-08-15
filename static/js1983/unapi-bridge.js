@@ -1,5 +1,5 @@
 (function (root, factory) {
-  const protocol = root.JS1983UnapiProtocol ||
+  const protocol = root.JSWsUnapiRelayProtocol || root.JS1983UnapiProtocol ||
     (typeof require === "function" ? require("./unapi-relay-protocol.js") : null);
   const api = factory(protocol);
   if (typeof module === "object" && module.exports) module.exports = api;
