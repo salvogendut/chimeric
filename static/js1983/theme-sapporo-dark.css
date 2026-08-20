@@ -108,6 +108,9 @@ html[data-theme="sapporo-dark"] select {
   text-transform: uppercase;
 }
 html[data-theme="sapporo-dark"] .select-shell::after { border-top-color: #b58900; }
+html[data-theme="sapporo-dark"] .memory-caption,
+html[data-theme="sapporo-dark"] .memory-scale,
+html[data-theme="sapporo-dark"] .memory-caption output { color: #002b36; }
 html[data-theme="sapporo-dark"] .display-panel {
   border: 3px solid #eee8d5;
   border-radius: 0;

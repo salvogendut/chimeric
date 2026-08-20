@@ -28,14 +28,20 @@ const statusEl = $("status");
 const toastEl = $("toast");
 const ledPowerEl = $("ledPower");
 const ledAEl = $("ledA");
+const ledIdeEl = $("ledIde");
 const ledInputEl = $("ledInput");
 const ledAudioEl = $("ledAudio");
 const expansionButtonEl = $("expansion");
 const expansionPanelEl = $("expansionPanel");
 const expansionBackdropEl = $("expansionBackdrop");
 const expansionCloseEl = $("expansionClose");
+const sunriseToggleEl = $("sunriseToggle");
+const sunriseStateEl = $("sunriseState");
+const sunriseSlotTextEl = $("sunriseSlotText");
+const ideAccessModeEls = [...document.querySelectorAll('input[name="ideAccessMode"]')];
 const sdMapperToggleEl = $("sdMapperToggle");
 const sdMapperStateEl = $("sdMapperState");
+const sdMapperSlotTextEl = $("sdMapperSlotText");
 const sdAccessModeEls = [...document.querySelectorAll('input[name="sdAccessMode"]')];
 const unapiToggleEl = $("unapiToggle");
 const unapiStateEl = $("unapiState");
@@ -69,19 +75,28 @@ function showToast(message) {
   toastTimer = setTimeout(() => toastEl.classList.remove("show"), 3200);
 }
 
+const SUNRISE_STORAGE_KEY = "javascript1983.expansion.sunrise";
+const IDE_ACCESS_STORAGE_KEY = "javascript1983.expansion.ideAccessMode";
 const SD_MAPPER_STORAGE_KEY = "javascript1983.expansion.sdMapper";
 const SD_ACCESS_STORAGE_KEY = "javascript1983.expansion.sdAccessMode";
 const UNAPI_STORAGE_KEY = "javascript1983.expansion.unapi";
 const UNAPI_ENDPOINT_STORAGE_KEY = "javascript1983.expansion.unapiEndpoint";
+const RAM_STORAGE_PREFIX = "javascript1983.machine.ram.";
+let sunriseEnabled = false;
+let ideAccessMode = "readonly";
 let sdMapperEnabled = false;
 let sdAccessMode = "readonly";
 let unapiEnabled = false;
 let unapiEndpoint = unapiBridge ? unapiBridge.endpoint : "";
 let unapiCertificateUrl = "";
+let applySunriseHardware = () => {};
 let applySdMapperHardware = () => {};
 let applyUnapiHardware = () => {};
 
 try {
+  sunriseEnabled = localStorage.getItem(SUNRISE_STORAGE_KEY) === "true";
+  ideAccessMode = localStorage.getItem(IDE_ACCESS_STORAGE_KEY) === "readwrite"
+    ? "readwrite" : "readonly";
   sdMapperEnabled = localStorage.getItem(SD_MAPPER_STORAGE_KEY) === "true";
   sdAccessMode = localStorage.getItem(SD_ACCESS_STORAGE_KEY) === "readwrite"
     ? "readwrite" : "readonly";
@@ -94,14 +109,62 @@ try {
 
 function updateExpansionIndicator() {
   expansionButtonEl.classList.toggle(
-    "has-expansion", sdMapperEnabled || unapiEnabled
+    "has-expansion", sunriseEnabled || sdMapperEnabled || unapiEnabled
   );
+}
+
+function updateCartridgeExtensionLabels() {
+  sunriseSlotTextEl.textContent = "Slot I / ATA-IDE";
+  sdMapperSlotTextEl.textContent =
+    (sunriseEnabled ? "Slot II" : "Slot I") + " / 512 KB RAM";
+}
+
+function updateSunriseUi() {
+  sunriseToggleEl.checked = sunriseEnabled;
+  sunriseStateEl.textContent = sunriseEnabled
+    ? "Enabled - cartridge I reserved" : "Disabled";
+  for (const input of ideAccessModeEls)
+    input.checked = input.value === ideAccessMode;
+  const slot = $("ideSlot");
+  const file = $("ideFile");
+  slot.setAttribute("aria-disabled", String(!sunriseEnabled));
+  file.disabled = !sunriseEnabled;
+  updateCartridgeExtensionLabels();
+  updateExpansionIndicator();
+}
+
+function setSunriseEnabled(enabled, persist = true, announce = false) {
+  sunriseEnabled = Boolean(enabled);
+  applySunriseHardware(sunriseEnabled);
+  updateSunriseUi();
+  updateSdMapperUi();
+  if (persist) {
+    try {
+      localStorage.setItem(SUNRISE_STORAGE_KEY, String(sunriseEnabled));
+    } catch (_) {}
+  }
+  if (announce)
+    showToast(sunriseEnabled
+      ? "Sunrise IDE enabled in cartridge I"
+      : "Sunrise IDE disabled");
+}
+
+function setIdeAccessMode(mode, persist = true, announce = false) {
+  ideAccessMode = mode === "readwrite" ? "readwrite" : "readonly";
+  updateSunriseUi();
+  if (persist) {
+    try { localStorage.setItem(IDE_ACCESS_STORAGE_KEY, ideAccessMode); } catch (_) {}
+  }
+  if (announce)
+    showToast("IDE images will open " +
+      (ideAccessMode === "readwrite" ? "read/write" : "read-only"));
 }
 
 function updateSdMapperUi() {
   sdMapperToggleEl.checked = sdMapperEnabled;
   sdMapperStateEl.textContent = sdMapperEnabled
-    ? "Enabled - cartridge II reserved" : "Disabled";
+    ? "Enabled - cartridge " + (sunriseEnabled ? "II" : "I") + " reserved"
+    : "Disabled";
   for (const input of sdAccessModeEls)
     input.checked = input.value === sdAccessMode;
   for (const card of ["A", "B"]) {
@@ -110,6 +173,7 @@ function updateSdMapperUi() {
     slot.setAttribute("aria-disabled", String(!sdMapperEnabled));
     file.disabled = !sdMapperEnabled;
   }
+  updateCartridgeExtensionLabels();
   updateExpansionIndicator();
 }
 
@@ -124,7 +188,7 @@ function setSdMapperEnabled(enabled, persist = true, announce = false) {
   }
   if (announce)
     showToast(sdMapperEnabled
-      ? "SD Mapper V2 enabled in cartridge II"
+      ? "SD Mapper V2 enabled in cartridge " + (sunriseEnabled ? "II" : "I")
       : "SD Mapper V2 disabled");
 }
 
@@ -239,6 +303,14 @@ document.addEventListener("keydown", event => {
 sdMapperToggleEl.addEventListener("change", () => {
   setSdMapperEnabled(sdMapperToggleEl.checked, true, true);
 });
+sunriseToggleEl.addEventListener("change", () => {
+  setSunriseEnabled(sunriseToggleEl.checked, true, true);
+});
+for (const input of ideAccessModeEls) {
+  input.addEventListener("change", () => {
+    if (input.checked) setIdeAccessMode(input.value, true, true);
+  });
+}
 for (const input of sdAccessModeEls) {
   input.addEventListener("change", () => {
     if (input.checked) setSdAccessMode(input.value, true, true);
@@ -268,6 +340,7 @@ unapiEndpointEl.value = unapiEndpoint;
 applyUnapiEndpoint(unapiEndpoint, false);
 if (unapiBridge) unapiBridge.onStatus(updateUnapiRelayStatus);
 setExpansionPanelOpen(false, false);
+updateSunriseUi();
 updateSdMapperUi();
 updateUnapiUi();
 
@@ -448,6 +521,9 @@ create1983().then(m => {
   const frameClock = JS1983Audio.createFrameClock(m._poc_frame_hz());
   const peripherals = JS1983Hardware.createPeripheralState();
   const modelEl = $("model");
+  const memoryExpansionEl = $("memoryExpansion");
+  const memoryValueEl = $("memoryValue");
+  const memoryMinimumEl = $("memoryMinimum");
   const frameRateLabelEl = $("frameRateLabel");
   const resetEl = $("reset");
   const diskSlotEl = $("diskSlot");
@@ -469,6 +545,14 @@ create1983().then(m => {
   const joystatusEl = $("joystatus");
   const joymatrixEl = $("joymatrix");
   const screenHintEl = $("screenHint");
+  const ideUi = {
+    slot: $("ideSlot"),
+    file: $("ideFile"),
+    name: $("ideName"),
+    eject: $("ideEject"),
+    led: $("ideLed"),
+    path: "/ide-master.img",
+  };
   const sdCardUi = ["A", "B"].map((letter, card) => ({
     card,
     slot: $("sdSlot" + letter),
@@ -479,11 +563,26 @@ create1983().then(m => {
     path: "/sd-card-" + letter.toLowerCase() + ".img",
   }));
 
+  const ramSelections = [
+    JS1983Hardware.defaultRamKb(0),
+    JS1983Hardware.defaultRamKb(1),
+  ];
+  for (let model = 0; model < ramSelections.length; ++model) {
+    try {
+      const stored = Number(localStorage.getItem(RAM_STORAGE_PREFIX + model));
+      if (JS1983Hardware.ramSizesForModel(model).includes(stored))
+        ramSelections[model] = stored;
+    } catch (_) {
+      // Keep the native machine default when browser storage is unavailable.
+    }
+  }
   let currentModel = 0;
   let audioCtx = null;
   let audioScheduler = null;
   let prevGamepad = null;
   let ledState = 0;
+  let ideImage = null;
+  let ideLedTimer = 0;
   const sdCardImages = [null, null];
   const sdLedTimers = [0, 0];
   let unapiLedTimer = 0;
@@ -500,10 +599,17 @@ create1983().then(m => {
     );
     const startupExtensions = JS1983Media.resolveStartupExtensions(
       startupMedia,
-      { sdMapper: sdMapperEnabled, unapi: unapiEnabled }
+      {
+        sunrise: sunriseEnabled,
+        sdMapper: sdMapperEnabled,
+        unapi: unapiEnabled,
+      }
     );
+    sunriseEnabled = startupExtensions.sunrise;
     sdMapperEnabled = startupExtensions.sdMapper;
     unapiEnabled = startupExtensions.unapi;
+    if (startupMedia.ideMode !== null)
+      ideAccessMode = startupMedia.ideMode;
     if (startupMedia.sdMode !== null)
       sdAccessMode = startupMedia.sdMode;
   } catch (error) {
@@ -688,12 +794,168 @@ create1983().then(m => {
     }
   }
 
+  function syncCartridgeExtensions() {
+    const owners = [];
+    if (sunriseEnabled) owners.push("Sunrise IDE");
+    if (sdMapperEnabled) owners.push("SD Mapper V2");
+    peripherals.setCartridgeExtensions(owners);
+    clearAllCartUi();
+    updateCartridgeAvailability();
+    updateSunriseUi();
+    updateSdMapperUi();
+  }
+
+  function clearIdeUi() {
+    ideImage = null;
+    ideUi.name.textContent = "No image loaded";
+    ideUi.eject.disabled = true;
+    ideUi.file.value = "";
+    ideUi.led.classList.remove("on");
+  }
+
+  function updateIdeAvailability() {
+    ideUi.slot.setAttribute("aria-disabled", String(!sunriseEnabled));
+    ideUi.file.disabled = !sunriseEnabled;
+    ideUi.eject.disabled = !sunriseEnabled || !ideImage;
+  }
+
+  function downloadIdeImage() {
+    if (!ideImage || !ideImage.writable) return;
+    const blob = new Blob([m.FS.readFile(ideUi.path)], {
+      type: "application/octet-stream",
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = ideImage.name;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 0);
+  }
+
+  function ejectIde(options = {}) {
+    const clear = options.clear !== false;
+    const download = options.download !== false;
+    if (ideImage) {
+      const rc = m._poc_eject_ide();
+      if (rc !== 0) throw new Error("IDE image could not be flushed safely");
+      if (download) downloadIdeImage();
+    }
+    if (clear) clearIdeUi();
+  }
+
+  function mountIdeData(data, name, writable, path = ideUi.path) {
+    if (!sunriseEnabled) throw new Error("enable Sunrise IDE first");
+    if (ideImage) ejectIde();
+    m.FS.writeFile(path, data);
+    const rc = m.ccall(
+      "poc_mount_ide", "number", ["string", "number"],
+      [path, writable ? 1 : 0]
+    );
+    if (rc !== 0) throw new Error("unsupported or damaged IDE image");
+    ideImage = { name, writable };
+    ideUi.name.textContent = name + (writable ? " (R/W)" : " (R/O)");
+    ideUi.eject.disabled = false;
+    setStatus("IDE master: " + name);
+  }
+
+  function remountIde() {
+    if (!sunriseEnabled || !ideImage) return;
+    const rc = m.ccall(
+      "poc_mount_ide", "number", ["string", "number"],
+      [ideUi.path, ideImage.writable ? 1 : 0]
+    );
+    if (rc !== 0) {
+      setStatus("IDE master could not be remounted");
+      clearIdeUi();
+    }
+    updateIdeAvailability();
+  }
+
+  async function loadIdeFile(file) {
+    if (!file) return;
+    try {
+      const data = new Uint8Array(await file.arrayBuffer());
+      mountIdeData(data, file.name, ideAccessMode === "readwrite");
+      showToast("IDE image loaded");
+    } catch (error) {
+      setStatus("IDE image load failed: " + error.message);
+      showToast("Could not load " + file.name);
+    }
+  }
+
+  ideUi.file.addEventListener("change", () => loadIdeFile(ideUi.file.files[0]));
+  ideUi.eject.addEventListener("click", () => {
+    try {
+      const wasWritable = Boolean(ideImage?.writable);
+      ejectIde();
+      setStatus("IDE image ejected safely");
+      showToast(wasWritable ? "Updated IDE image downloaded" : "IDE image ejected");
+    } catch (error) {
+      setStatus("IDE eject failed: " + error.message);
+      showToast("Could not eject IDE image safely");
+    }
+  });
+
   function resetAudioQueue() {
     if (audioScheduler) audioScheduler.reset();
     else m._poc_audio_reset();
   }
 
+  function updateMemoryControl(model) {
+    const sizes = JS1983Hardware.ramSizesForModel(model);
+    const ramKb = JS1983Hardware.normalizeRamKb(model, ramSelections[model]);
+    const index = JS1983Hardware.RAM_SIZES_KB.indexOf(ramKb);
+
+    ramSelections[model] = ramKb;
+    memoryExpansionEl.min = String(
+      JS1983Hardware.RAM_SIZES_KB.indexOf(sizes[0])
+    );
+    memoryExpansionEl.max = String(JS1983Hardware.RAM_SIZES_KB.length - 1);
+    memoryExpansionEl.value = String(index);
+    memoryValueEl.value = JS1983Hardware.formatRamKb(ramKb);
+    memoryMinimumEl.textContent = JS1983Hardware.formatRamKb(sizes[0]);
+    memoryExpansionEl.setAttribute(
+      "aria-valuetext", JS1983Hardware.formatRamKb(ramKb)
+    );
+  }
+
+  function machineReadyStatus(model) {
+    const prefix = model === 1
+      ? "Philips NMS 8250 ready - RainBIOS + WD2793"
+      : "MSX1 ready - C-BIOS";
+    return prefix + " - " +
+      JS1983Hardware.formatRamKb(ramSelections[model]) + " RAM";
+  }
+
+  function applyMemorySelection(ramKb, persist = true, announce = true) {
+    const supported = JS1983Hardware.ramSizesForModel(currentModel);
+    if (!supported.includes(ramKb) || m._poc_set_ram_kb(ramKb) !== ramKb)
+      return false;
+    ramSelections[currentModel] = ramKb;
+    if (persist) {
+      try {
+        localStorage.setItem(RAM_STORAGE_PREFIX + currentModel, String(ramKb));
+      } catch (_) {}
+    }
+    updateMemoryControl(currentModel);
+    resetAudioQueue();
+    frameClock.reset();
+    releaseAllJoy();
+    releaseAllVirtualKeys();
+    setStatus(machineReadyStatus(currentModel));
+    if (announce)
+      showToast("System RAM changed to " + JS1983Hardware.formatRamKb(ramKb));
+    return true;
+  }
+
   function reinit(model) {
+    if (sunriseEnabled && ideImage) {
+      try {
+        ejectIde({ clear: false, download: false });
+      } catch (error) {
+        setStatus("IDE eject failed: " + error.message);
+        return false;
+      }
+    }
     if (sdMapperEnabled) {
       for (const ui of sdCardUi) {
         if (sdCardImages[ui.card])
@@ -707,6 +969,15 @@ create1983().then(m => {
     }
     currentModel = model;
     modelEl.value = String(model);
+    const selectedRam = JS1983Hardware.normalizeRamKb(
+      model, ramSelections[model]
+    );
+    if (m._poc_set_ram_kb(selectedRam) !== selectedRam) {
+      setStatus("Machine initialization failed: RAM configuration unavailable");
+      return false;
+    }
+    ramSelections[model] = selectedRam;
+    updateMemoryControl(model);
     framebufferPtr = m._poc_pixels();
     frameW = m._poc_width();
     frameH = m._poc_height();
@@ -718,17 +989,17 @@ create1983().then(m => {
     clearDiskUi();
     clearAllCartUi();
     clearCassUi();
+    applySunriseHardware(sunriseEnabled);
     applySdMapperHardware(sdMapperEnabled);
     applyUnapiHardware(unapiEnabled);
+    remountIde();
     remountSdCards();
     updateFrameRateLabel();
     updateFloppyUi();
     updateCartridgeAvailability();
     applyInputDevice(peripherals.getInputDevice(), false);
     updateScreenModeReadout();
-    setStatus(model === 1
-      ? "Philips NMS 8250 ready - RainBIOS + WD2793"
-      : "MSX1 ready - C-BIOS");
+    setStatus(machineReadyStatus(model));
     return true;
   }
 
@@ -740,6 +1011,23 @@ create1983().then(m => {
         : "MSX1 (C-BIOS) selected");
     } else {
       modelEl.value = String(currentModel);
+    }
+  });
+
+  memoryExpansionEl.addEventListener("input", () => {
+    const ramKb = JS1983Hardware.RAM_SIZES_KB[Number(memoryExpansionEl.value)];
+    memoryValueEl.value = JS1983Hardware.formatRamKb(ramKb);
+    memoryExpansionEl.setAttribute(
+      "aria-valuetext", JS1983Hardware.formatRamKb(ramKb)
+    );
+  });
+
+  memoryExpansionEl.addEventListener("change", () => {
+    const ramKb = JS1983Hardware.RAM_SIZES_KB[Number(memoryExpansionEl.value)];
+    if (!applyMemorySelection(ramKb)) {
+      updateMemoryControl(currentModel);
+      setStatus("RAM configuration could not be applied");
+      showToast("Could not change system RAM");
     }
   });
 
@@ -968,6 +1256,38 @@ create1983().then(m => {
     });
   }
 
+  applySunriseHardware = enabled => {
+    const requested = Boolean(enabled);
+    if (!requested) {
+      try {
+        ejectIde();
+      } catch (error) {
+        setStatus("IDE eject failed: " + error.message);
+        sunriseEnabled = true;
+        updateSunriseUi();
+        return;
+      }
+    } else {
+      m._poc_eject_cartridge(0);
+      clearCartUi(0);
+      if (sdMapperEnabled && m._poc_cartridge_loaded(1)) {
+        m._poc_eject_cartridge(1);
+        clearCartUi(1);
+      }
+    }
+
+    if (Boolean(m._poc_sunrise_enabled()) !== requested)
+      m._poc_set_sunrise(requested ? 1 : 0);
+    sunriseEnabled = Boolean(m._poc_sunrise_enabled());
+    syncCartridgeExtensions();
+    resetAudioQueue();
+    frameClock.reset();
+    releaseAllJoy();
+    updateIdeAvailability();
+    if (requested && !sunriseEnabled)
+      setStatus("Sunrise IDE firmware could not be installed");
+  };
+
   applySdMapperHardware = enabled => {
     const requested = Boolean(enabled);
     if (!requested) {
@@ -979,17 +1299,19 @@ create1983().then(m => {
           return;
         }
       }
-    } else if (m._poc_cartridge_loaded(1)) {
-      m._poc_eject_cartridge(1);
-      clearCartUi(1);
+    } else {
+      const slot = sunriseEnabled ? 1 : 0;
+      if (m._poc_cartridge_loaded(slot)) {
+        m._poc_eject_cartridge(slot);
+        clearCartUi(slot);
+      }
     }
 
     if (Boolean(m._poc_sd_mapper_enabled()) !== requested)
       m._poc_set_sd_mapper(requested ? 1 : 0);
     const actual = Boolean(m._poc_sd_mapper_enabled());
     sdMapperEnabled = actual;
-    peripherals.setCartridgeExtensions(actual ? ["SD Mapper V2"] : []);
-    if (actual) clearCartUi(1);
+    syncCartridgeExtensions();
     resetAudioQueue();
     frameClock.reset();
     releaseAllJoy();
@@ -1015,6 +1337,10 @@ create1983().then(m => {
     if (!reinit(startupMedia.machine))
       startupMediaError = new Error("selected machine firmware is unavailable");
   } else {
+    if (!startupMediaError &&
+        !applyMemorySelection(ramSelections[currentModel], false, false))
+      startupMediaError = new Error("stored RAM configuration is unavailable");
+    applySunriseHardware(sunriseEnabled);
     applySdMapperHardware(sdMapperEnabled);
     applyUnapiHardware(unapiEnabled);
   }
@@ -1038,7 +1364,8 @@ create1983().then(m => {
     }
     const media = startupMedia;
     const hasMedia = Boolean(
-      media.disk || media.cartridge || media.cartridge2 || media.sdA || media.sdB
+      media.disk || media.cartridge || media.cartridge2 || media.ide ||
+      media.sdA || media.sdB
     );
     if (!hasMedia && media.extensions === null && media.machine === null) return;
 
@@ -1050,12 +1377,13 @@ create1983().then(m => {
           throw new Error("could not select the NMS 8250 floppy profile");
       }
 
-      const [cartridge, cartridge2, disk, sdA, sdB] = await Promise.all([
+      const [cartridge, cartridge2, disk, ide, sdA, sdB] = await Promise.all([
         media.cartridge
           ? fetchServerMedia(media.cartridge, "cartridge") : null,
         media.cartridge2
           ? fetchServerMedia(media.cartridge2, "cartridge 2") : null,
         media.disk ? fetchServerMedia(media.disk, "Drive A disk") : null,
+        media.ide ? fetchServerMedia(media.ide, "IDE image") : null,
         media.sdA ? fetchServerMedia(media.sdA, "SD A image") : null,
         media.sdB ? fetchServerMedia(media.sdB, "SD B image") : null,
       ]);
@@ -1068,6 +1396,11 @@ create1983().then(m => {
           cartridge2.name,
           "/server-cartridge-2.rom",
           1
+        );
+      }
+      if (ide) {
+        mountIdeData(
+          ide.data, ide.name, ideAccessMode === "readwrite", ideUi.path
         );
       }
       if (sdA) {
@@ -1106,6 +1439,9 @@ create1983().then(m => {
       } else if (disk) {
         setStatus("Drive A: " + disk.name + " - booting");
         showToast("Booting " + disk.name + " from Drive A");
+      } else if (ide) {
+        setStatus("IDE master: " + ide.name + " - booting");
+        showToast("Booting with IDE master: " + ide.name);
       } else if (sdA || sdB) {
         const card = sdA || sdB;
         const letter = sdA ? "A" : "B";
@@ -1427,6 +1763,15 @@ create1983().then(m => {
   }
 
   function updateExpansionActivity() {
+    if (m._poc_ide_activity()) {
+      ideUi.led.classList.add("on");
+      ledIdeEl.classList.add("on");
+      clearTimeout(ideLedTimer);
+      ideLedTimer = setTimeout(() => {
+        ideUi.led.classList.remove("on");
+        ledIdeEl.classList.remove("on");
+      }, 120);
+    }
     const sdActivity = m._poc_sd_activity_mask();
     for (const ui of sdCardUi) {
       if (!(sdActivity & (1 << ui.card))) continue;

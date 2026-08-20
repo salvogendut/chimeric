@@ -109,6 +109,9 @@ html[data-theme="sapporo"] select {
   text-transform: uppercase;
 }
 html[data-theme="sapporo"] .select-shell::after { border-top-color: #ffdc00; }
+html[data-theme="sapporo"] .memory-caption,
+html[data-theme="sapporo"] .memory-scale,
+html[data-theme="sapporo"] .memory-caption output { color: #111415; }
 html[data-theme="sapporo"] .display-panel {
   border: 3px solid #111415;
   border-radius: 0;

@@ -7,6 +7,38 @@
 
   const INPUT_JOYSTICK = 'joystick';
   const INPUT_MOUSE = 'mouse';
+  const RAM_SIZES_KB = Object.freeze([
+    16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
+  ]);
+  const DEFAULT_RAM_KB = Object.freeze([64, 128]);
+
+  function ramSizesForModel(model) {
+    if (model === 0) return [...RAM_SIZES_KB];
+    if (model === 1) return RAM_SIZES_KB.slice(2);
+    throw new Error('unsupported machine model: ' + model);
+  }
+
+  function normalizeRamKb(model, value) {
+    const sizes = ramSizesForModel(model);
+    const requested = Number(value);
+    let normalized = sizes[0];
+    for (const size of sizes) {
+      if (requested === size) return size;
+      if (requested > size) normalized = size;
+    }
+    return normalized;
+  }
+
+  function defaultRamKb(model) {
+    if (model !== 0 && model !== 1)
+      throw new Error('unsupported machine model: ' + model);
+    return DEFAULT_RAM_KB[model];
+  }
+
+  function formatRamKb(value) {
+    const ramKb = Number(value);
+    return ramKb >= 1024 ? (ramKb / 1024) + ' MiB' : ramKb + ' KiB';
+  }
 
   function normalizeInputDevice(device) {
     if (device === INPUT_JOYSTICK || device === INPUT_MOUSE) return device;
@@ -49,8 +81,7 @@
       cartridgeSlotOwner(slot) {
         if (slot !== 0 && slot !== 1)
           throw new Error('unsupported cartridge slot: ' + slot);
-        return slot === 1 && cartridgeExtensions.length
-          ? cartridgeExtensions[0] : null;
+        return cartridgeExtensions[slot] || null;
       },
       cartridgeSlotAvailable(slot) {
         return this.cartridgeSlotOwner(slot) === null;
@@ -61,6 +92,11 @@
   return {
     INPUT_JOYSTICK,
     INPUT_MOUSE,
+    RAM_SIZES_KB,
+    ramSizesForModel,
+    normalizeRamKb,
+    defaultRamKb,
+    formatRamKb,
     normalizeInputDevice,
     createPeripheralState,
   };

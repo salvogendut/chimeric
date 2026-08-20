@@ -37,7 +37,7 @@
     if (!params.has('extensions')) return null;
     const value = params.get('extensions').trim();
     if (!value) return [];
-    const supported = new Set(['sdmapper', 'unapi']);
+    const supported = new Set(['sunrise', 'sdmapper', 'unapi']);
     const extensions = [];
     for (const item of value.split(',')) {
       const extension = item.trim().toLowerCase();
@@ -56,6 +56,14 @@
     return value;
   }
 
+  function validateIdeMode(value, hasImage) {
+    if (value === null) return null;
+    if (!hasImage) throw new Error('idemode requires an ide URL');
+    if (value !== 'readonly' && value !== 'readwrite')
+      throw new Error('idemode must be readonly or readwrite');
+    return value;
+  }
+
   function parseStartupMedia(search, baseUrl) {
     const params = new URLSearchParams(search || '');
     const media = {
@@ -65,6 +73,7 @@
       disk: resolveHttpUrl(params.get('disk'), baseUrl, 'disk'),
       cartridge: resolveHttpUrl(params.get('cartridge'), baseUrl, 'cartridge'),
       cartridge2: resolveHttpUrl(params.get('cartridge2'), baseUrl, 'cartridge2'),
+      ide: resolveHttpUrl(params.get('ide'), baseUrl, 'ide'),
       sdA: resolveHttpUrl(params.get('sda'), baseUrl, 'sda'),
       sdB: resolveHttpUrl(params.get('sdb'), baseUrl, 'sdb'),
       extensions: validateExtensions(params),
@@ -74,20 +83,27 @@
       params.has('sdmode') ? params.get('sdmode').trim().toLowerCase() : null,
       Boolean(media.sdA || media.sdB)
     );
+    media.ideMode = validateIdeMode(
+      params.has('idemode') ? params.get('idemode').trim().toLowerCase() : null,
+      Boolean(media.ide)
+    );
     if (media.autorun && !media.disk)
       throw new Error('autorun requires a disk URL');
     return media;
   }
 
   function resolveStartupExtensions(media, current = {}) {
+    let sunrise = Boolean(current.sunrise);
     let sdMapper = Boolean(current.sdMapper);
     let unapi = Boolean(current.unapi);
     if (media.extensions !== null) {
+      sunrise = media.extensions.includes('sunrise');
       sdMapper = media.extensions.includes('sdmapper');
       unapi = media.extensions.includes('unapi');
     }
+    if (media.ide) sunrise = true;
     if (media.sdA || media.sdB) sdMapper = true;
-    return { sdMapper, unapi };
+    return { sunrise, sdMapper, unapi };
   }
 
   function filenameFromUrl(value, fallback) {

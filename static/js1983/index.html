@@ -25,12 +25,54 @@
   </header>
 
   <div class="expansion-device-list">
+    <section class="expansion-device sunrise-device" aria-labelledby="sunriseTitle">
+      <div class="expansion-device-heading">
+        <span class="expansion-device-mark" aria-hidden="true">IDE</span>
+        <div>
+          <h3 id="sunriseTitle">Sunrise IDE</h3>
+          <span id="sunriseSlotText">Slot I / ATA-IDE</span>
+        </div>
+      </div>
+      <div class="expansion-device-controls">
+        <label class="toggle-control expansion-device-toggle">
+          <input type="checkbox" id="sunriseToggle">
+          <span class="toggle-track"><i></i></span>
+          <span><strong>Cartridge power</strong><small id="sunriseState" aria-live="polite">Disabled</small></span>
+        </label>
+        <p class="firmware-note"><strong>Firmware</strong><a href="nextor-license.txt" target="_blank" rel="noopener noreferrer">Embedded Nextor 2.1.1</a></p>
+        <fieldset class="expansion-mode-field">
+          <legend>IDE access</legend>
+          <div class="segmented-control">
+            <label>
+              <input type="radio" name="ideAccessMode" value="readonly" checked>
+              <span>Read-only</span>
+            </label>
+            <label>
+              <input type="radio" name="ideAccessMode" value="readwrite">
+              <span>Read/write</span>
+            </label>
+          </div>
+        </fieldset>
+        <div class="extension-media-list">
+          <article id="ideSlot" class="extension-media-slot">
+            <i id="ideLed" class="extension-activity-lamp" aria-hidden="true"></i>
+            <div><strong>IDE master</strong><span id="ideName">No image loaded</span></div>
+            <label class="extension-small-key" for="ideFile">Load</label>
+            <button id="ideEject" class="extension-small-key" type="button" disabled>Eject</button>
+            <input class="visually-hidden" type="file" id="ideFile"
+                   accept=".img,.IMG,.hdd,.HDD,.hd,.HD,.bin,.BIN">
+          </article>
+        </div>
+        <p class="extension-help">Read/write images are downloaded with their changes on safe ejection.</p>
+      </div>
+    </section>
+
     <section class="expansion-device sd-mapper-device" aria-labelledby="sdMapperTitle">
       <div class="expansion-device-heading">
         <span class="expansion-device-mark" aria-hidden="true">SD</span>
         <div>
           <h3 id="sdMapperTitle">SD Mapper V2</h3>
-          <span>Slot II / 512 KB RAM</span>
+          <span id="sdMapperSlotText">Slot I / 512 KB RAM</span>
         </div>
       </div>
       <div class="expansion-device-controls">
@@ -152,11 +194,26 @@
     <div class="receiver-top">
       <div class="model-bank">
         <label for="model">Machine</label>
-        <div class="select-shell">
-          <select id="model">
-            <option value="0">MSX1 (C-BIOS)</option>
-            <option value="1">Philips NMS 8250 (RainBIOS)</option>
-          </select>
+        <div class="machine-controls">
+          <div class="select-shell">
+            <select id="model">
+              <option value="0">MSX1 (C-BIOS)</option>
+              <option value="1">Philips NMS 8250 (RainBIOS)</option>
+            </select>
+          </div>
+          <label class="memory-expansion" for="memoryExpansion">
+            <span class="memory-caption">
+              <strong>System RAM</strong>
+              <output id="memoryValue" for="memoryExpansion">64 KiB</output>
+            </span>
+            <input id="memoryExpansion" type="range" min="0" max="8"
+                   step="1" value="2">
+            <span class="memory-scale" aria-hidden="true">
+              <span id="memoryMinimum">16 KiB</span>
+              <span>Mapper expansion</span>
+              <span>4 MiB</span>
+            </span>
+          </label>
         </div>
       </div>
 
@@ -167,6 +224,7 @@
 
       <div class="activity-bank" aria-label="Activity indicators">
         <div><i id="ledA" class="led led-red"></i><span>Drive A</span></div>
+        <div><i id="ledIde" class="led led-green"></i><span>IDE</span></div>
         <div><i id="ledInput" class="led led-amber"></i><span>Input</span></div>
         <div><i id="ledAudio" class="led led-green"></i><span>Audio</span></div>
       </div>
