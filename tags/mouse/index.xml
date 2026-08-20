@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Mouse on Chimeric</title>
+		<link>https://salvogendut.github.io/chimeric/tags/mouse/</link>
+		<description>Recent content in Mouse on Chimeric</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Wed, 19 Aug 2026 21:42:06 +0200</lastBuildDate>
+		
+			<atom:link href="https://salvogendut.github.io/chimeric/tags/mouse/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>PS/2 to MSX mouse with an Arduino Nano</title>
+				<link>https://salvogendut.github.io/chimeric/posts/ps-2-to-msx-mouse-with-an-arduino-nano/</link>
+				<pubDate>Wed, 19 Aug 2026 21:42:06 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/ps-2-to-msx-mouse-with-an-arduino-nano/</guid>
+				<description>&lt;p&gt;I was able to put together a cheap PS/2-to-MSX mouse interface using an Arduino Nano. The project works by using the Arduino Nano as the bridge between a standard PS/2 mouse and the MSX mouse port.&lt;/p&gt;&#xA;&lt;p&gt;The design is based on &lt;a href=&#34;https://github.com/denjhang/MSX-Nano-Mouse-2025&#34;&gt;denjhang’s MSX Nano Mouse 2025 repository&lt;/a&gt;, which provides both the Gerber files for the PCB and the firmware source code. Having those files available made the build straightforward and inexpensive: I could order the board, assemble the small set of components, flash the Nano, and connect a PS/2 mouse.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

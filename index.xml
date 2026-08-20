@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Chimeric</title>
+		<link>https://salvogendut.github.io/chimeric/</link>
+		<description>Recent content on Chimeric</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 20 Aug 2026 23:40:12 +0200</lastBuildDate>
+		
+			<atom:link href="https://salvogendut.github.io/chimeric/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Browsing the Internet on SymbOS</title>
+				<link>https://salvogendut.github.io/chimeric/posts/browsing-the-internet-on-symbos/</link>
+				<pubDate>Thu, 20 Aug 2026 23:40:12 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/browsing-the-internet-on-symbos/</guid>
+				<description>&lt;p&gt;Browsing the modern Internet from an 8-bit computer is no small feat. &lt;strong&gt;SymZilla&lt;/strong&gt; was originally developed by SymbOS’s Prodatron as a document viewer. My contribution was to add networking and support for displaying simplified HTML pages, helping bring web browsing to &lt;a href=&#34;https://symbos.org/&#34;&gt;SymbOS&lt;/a&gt; on classic machines.&lt;/p&gt;&#xA;&lt;p&gt;The browser relies on &lt;a href=&#34;https://github.com/salvogendut/GB-proxy&#34;&gt;GB-proxy&lt;/a&gt;, a companion proxy designed to reduce the complexity of today’s web. GB-proxy retrieves pages on behalf of the client, handles SSL/TLS connections, strips pages down to a simpler form of HTML, and shrinks and converts images into a format SymbOS can display. This lets the browser concentrate on presenting a practical, lightweight version of the web within the limits of the platform.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>PS/2 to MSX mouse with an Arduino Nano</title>
+				<link>https://salvogendut.github.io/chimeric/posts/ps-2-to-msx-mouse-with-an-arduino-nano/</link>
+				<pubDate>Wed, 19 Aug 2026 21:42:06 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/ps-2-to-msx-mouse-with-an-arduino-nano/</guid>
+				<description>&lt;p&gt;I was able to put together a cheap PS/2-to-MSX mouse interface using an Arduino Nano. The project works by using the Arduino Nano as the bridge between a standard PS/2 mouse and the MSX mouse port.&lt;/p&gt;&#xA;&lt;p&gt;The design is based on &lt;a href=&#34;https://github.com/denjhang/MSX-Nano-Mouse-2025&#34;&gt;denjhang’s MSX Nano Mouse 2025 repository&lt;/a&gt;, which provides both the Gerber files for the PCB and the firmware source code. Having those files available made the build straightforward and inexpensive: I could order the board, assemble the small set of components, flash the Nano, and connect a PS/2 mouse.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Smoke testing the Omega MSX</title>
+				<link>https://salvogendut.github.io/chimeric/posts/smoke-testing-the-omega-msx-2/</link>
+				<pubDate>Wed, 19 Aug 2026 21:35:45 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/smoke-testing-the-omega-msx-2/</guid>
+				<description>&lt;p&gt;After some initial setbacks, we are finally making progress with the Omega MSX.&lt;/p&gt;&#xA;&lt;p&gt;The first problem was a defective &lt;strong&gt;Yamaha 8139&lt;/strong&gt; chip, which prevented the system from booting at all. Once that was resolved, we were able to get the machine to display &lt;strong&gt;C-BIOS&lt;/strong&gt; and its diagnostic screens.&lt;/p&gt;&#xA;&lt;p&gt;That revealed a second fault: capacitor &lt;strong&gt;C64&lt;/strong&gt; was measuring only &lt;strong&gt;68 µF&lt;/strong&gt;, rather than its specified &lt;strong&gt;220 µF&lt;/strong&gt;. This was responsible for a strange yellow ghosting effect on the display.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Javascript 1984</title>
+				<link>https://salvogendut.github.io/chimeric/posts/javascript-1984/</link>
+				<pubDate>Tue, 11 Aug 2026 08:28:03 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/javascript-1984/</guid>
+				<description>&lt;p&gt;The &lt;strong&gt;1984 emulator&lt;/strong&gt; is now available in the browser.&lt;/p&gt;&#xA;&lt;p&gt;This JavaScript and WebAssembly build brings the emulator to the web, allowing it to run directly in a modern browser without a separate native installation. WebAssembly handles the performance-sensitive emulation work, while JavaScript provides the browser integration and user interface.&#xA;Might as well provide the same interface to 1983 and 1985 as well. Only doubts: the CSS template seems to be too much similar across similar projects.&#xA;You can try them here:&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>New MSX developments</title>
+				<link>https://salvogendut.github.io/chimeric/posts/msx-developments/</link>
+				<pubDate>Fri, 31 Jul 2026 13:12:33 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/msx-developments/</guid>
+				<description>&lt;p&gt;&lt;img src=&#34;https://i.postimg.cc/sxqT31C0/rainbios-1.png&#34; alt=&#34;rainbios boot screen&#34;&gt;&#xA;&lt;img src=&#34;https://i.postimg.cc/hv62KhRM/rainbios-2.png&#34; alt=&#34;rainbios boot menu&#34;&gt;&#xA;I have beend digging a lot recently,  on the MSX side of things. After making sure GEOBENCH would run properly on the platform&#xA;and developing a UNAPI-compatible network daemon for SymbOS (which is at the moment &amp;lsquo;unreleased&amp;rsquo; until I hear from&#xA;Prodatron). I decided to dedicate some time to the issue of &amp;lsquo;having an open source bios for the MSX which can run basic&#xA;and launch cartridges&amp;rsquo;. I named the project : &lt;a href=&#34;https://github.com/salvogendut/rainbios&#34;&gt;rainbios&lt;/a&gt; .Right now it kinda boots&#xA;and lets you boot simple game cartridges that do not require disk or other particular hardware. A second rom has been added with&#xA;the Z80 version of the BBC basic and can be run from the menu. Basic kinda works but it&amp;rsquo;s still early in the process and I am&#xA;expecting lots of bugs.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>onechipbook wifi and GEOBENCH</title>
+				<link>https://salvogendut.github.io/chimeric/posts/onechipbook-wifi-and-geobench/</link>
+				<pubDate>Wed, 22 Jul 2026 20:37:56 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/onechipbook-wifi-and-geobench/</guid>
+				<description>&lt;h2 id=&#34;photos&#34;&gt;Photos&lt;/h2&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://salvogendut.github.io/chimeric/images/20260722_194203.jpg&#34; alt=&#34;GEOBENCH browser&#34;&gt;&#xA;&lt;em&gt;GEOBENCH browser&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://salvogendut.github.io/chimeric/images/20260722_194021.jpg&#34; alt=&#34;GEOBENCH telnet&#34;&gt;&#xA;&lt;em&gt;GEOBENCH telnet&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;I recently updated the ESP-01S Wi-Fi module inside my OneChipBook. The firmware and tools I used came from the links in Oduvaldo Pavan Junior&amp;rsquo;s YouTube video:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=uoaiEamWUUg&#34;&gt;Oduvaldo Pavan Junior&amp;rsquo;s OneChipBook ESP8266 video&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;The package included Espressif&amp;rsquo;s Windows Flash Download Tool, but I did not use it in the end. The current &lt;code&gt;.exe&lt;/code&gt; did not run correctly on my Windows 7 machine, so I flashed the ESP-01S directly from Linux using Espressif&amp;rsquo;s command-line tool, &lt;a href=&#34;https://docs.espressif.com/projects/esptool/en/latest/esp8266/&#34;&gt;&lt;code&gt;esptool.py&lt;/code&gt;&lt;/a&gt;.&#xA;You will also need the correct firmware from here, as the one in the video has a problem where it won&amp;rsquo;t save the WiFi settings:&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Complexity over 10000</title>
+				<link>https://salvogendut.github.io/chimeric/posts/complexity-over-10000/</link>
+				<pubDate>Sat, 18 Jul 2026 18:41:13 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/complexity-over-10000/</guid>
+				<description>&lt;p&gt;Dealing with my new pet project &amp;lsquo;NixBench&amp;rsquo; a sort of Wayland-based desktop for&#xA;NetBSD (probably portable to other platforms as well). The level of layering and&#xA;complexity modern *nix desktops have reached due to historical reasons is ridiculous.&#xA;For every application you need to take into account the native layer, the GTK compatibility one&#xA;the X.org/Xwayland one. When there is an issue and things don&amp;rsquo;t work as expected is usually&#xA;a problem of plumbing between all these layers.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>To the Sky and beyond</title>
+				<link>https://salvogendut.github.io/chimeric/posts/to-the-sky-and-beyond/</link>
+				<pubDate>Sat, 11 Jul 2026 08:16:02 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/to-the-sky-and-beyond/</guid>
+				<description>&lt;p&gt;Half jokingly I started the endeavour of having a proper&#xA;browser running under GEOBENCH and ta-da it&amp;rsquo;s ready!!! Hammering down some issues&#xA;here and there, properly caching HTML is not an easy task on an 8-bitter and hopefully&#xA;it will work well with retro proxies too. Half jokingly I thought this would be the&#xA;first browser to run on the PCW proper. Will the world ever notice? haha&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>AI or not AI?</title>
+				<link>https://salvogendut.github.io/chimeric/posts/ai-or-not-ai/</link>
+				<pubDate>Wed, 08 Jul 2026 08:05:06 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/ai-or-not-ai/</guid>
+				<description>&lt;ul&gt;&#xA;&lt;li&gt;Hey , you know, you can ask an AI agent to take over this stuff and it will help you rebuild or port it over to your&#xA;target architecture very quickly! -&lt;/li&gt;&#xA;&lt;li&gt;I don&amp;rsquo;t use AI. LOL -&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;This is the kind of reaction most people in the development community still has about using the AI tools to do their work.&#xA;I think it is a decision I can respect but , in my opinion, is not a decision that has been thought through and through.&#xA;It is, so to speak, a knee-jerk reaction and I can totally understand why. Let&amp;rsquo;s say you have spent a good chunk of your&#xA;life doing development in , say, assembler or C or even something more obscure like Delphi or Pascal you probably will&#xA;feel disoriented right now. The world has changed and it has changed fast. Knowledge has changed too.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Porting GEOBENCH to the PCW</title>
+				<link>https://salvogendut.github.io/chimeric/posts/porting-geobench-to-the-pcw/</link>
+				<pubDate>Tue, 07 Jul 2026 10:02:08 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/porting-geobench-to-the-pcw/</guid>
+				<description>&lt;p&gt;I have though long and hard wether it would be worth porting GEOBENCH to a new architecture/computer and&#xA;realized that the perfect platform for that would be the Amstrad PCW , provided that you add some &amp;lsquo;modern&amp;rsquo;&#xA;hardware such as a DK&amp;rsquo;sound card [ DK&amp;rsquo;sound clone ] (&lt;a href=&#34;https://pcwwiki2.com/doku.php?id=hardware:perifericos:dksound&#34;&gt;https://pcwwiki2.com/doku.php?id=hardware:perifericos:dksound&lt;/a&gt;) (Mostly for the joystick/mouse capabilities) and a PerryFi wifi modem to use&#xA;telnet and BBSes. Another thing that would make it perfect is the fact that, in fact, we have a simil-CGA&#xA;mode that can use up to 4 different colors (Again using an external card). Challenge accepted&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>What is chimeric software?</title>
+				<link>https://salvogendut.github.io/chimeric/posts/what-is-chimeric-software/</link>
+				<pubDate>Mon, 06 Jul 2026 23:15:25 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/what-is-chimeric-software/</guid>
+				<description>&lt;p&gt;&lt;img src=&#34;https://salvogendut.github.io/chimeric/images/chimeric.png&#34; alt=&#34;Chimeric&#34;&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;what-is-chimeric-software&#34;&gt;What is Chimeric Software?&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;Chimeric software&lt;/strong&gt; is a concept born from the retrocomputing community that embraces the capabilities of modern software engineering&#xA;while asking a simple but fascinating question:&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;What if?&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;What if a particular piece of software had existed decades earlier?&#xA;What if it had been designed to run on the computers of the 8-bit and 16-bit era?&#xA;What would it have looked like, how would it have behaved, and what compromises or innovations would its creators have made?&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

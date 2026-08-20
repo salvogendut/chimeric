@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Webassembly on Chimeric</title>
+		<link>https://salvogendut.github.io/chimeric/tags/webassembly/</link>
+		<description>Recent content in Webassembly on Chimeric</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Tue, 11 Aug 2026 08:28:03 +0200</lastBuildDate>
+		
+			<atom:link href="https://salvogendut.github.io/chimeric/tags/webassembly/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Javascript 1984</title>
+				<link>https://salvogendut.github.io/chimeric/posts/javascript-1984/</link>
+				<pubDate>Tue, 11 Aug 2026 08:28:03 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/javascript-1984/</guid>
+				<description>&lt;p&gt;The &lt;strong&gt;1984 emulator&lt;/strong&gt; is now available in the browser.&lt;/p&gt;&#xA;&lt;p&gt;This JavaScript and WebAssembly build brings the emulator to the web, allowing it to run directly in a modern browser without a separate native installation. WebAssembly handles the performance-sensitive emulation work, while JavaScript provides the browser integration and user interface.&#xA;Might as well provide the same interface to 1983 and 1985 as well. Only doubts: the CSS template seems to be too much similar across similar projects.&#xA;You can try them here:&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>
