@@ -29,8 +29,10 @@
     if (value === null) return null;
     const machine = value.trim().toLowerCase();
     if (machine === 'msx1' || machine === 'cbios') return 0;
-    if (machine === 'nms8250' || machine === 'msx2') return 1;
-    throw new Error('machine must be msx1 or nms8250');
+    if (machine === 'nms8250' || machine === 'philips') return 1;
+    if (machine === 'omega' || machine === 'omega-msx2' || machine === 'msx2')
+      return 2;
+    throw new Error('machine must be msx1, omega-msx2, or nms8250');
   }
 
   function validateExtensions(params) {

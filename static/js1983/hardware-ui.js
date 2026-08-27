@@ -10,11 +10,11 @@
   const RAM_SIZES_KB = Object.freeze([
     16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
   ]);
-  const DEFAULT_RAM_KB = Object.freeze([64, 128]);
+  const DEFAULT_RAM_KB = Object.freeze([64, 128, 128]);
 
   function ramSizesForModel(model) {
     if (model === 0) return [...RAM_SIZES_KB];
-    if (model === 1) return RAM_SIZES_KB.slice(2);
+    if (model === 1 || model === 2) return RAM_SIZES_KB.slice(2);
     throw new Error('unsupported machine model: ' + model);
   }
 
@@ -30,7 +30,7 @@
   }
 
   function defaultRamKb(model) {
-    if (model !== 0 && model !== 1)
+    if (model !== 0 && model !== 1 && model !== 2)
       throw new Error('unsupported machine model: ' + model);
     return DEFAULT_RAM_KB[model];
   }

@@ -20,6 +20,10 @@ const CODE2SCAN = {
 };
 
 const SDL_KMOD_SHIFT = 0x0002;
+const MACHINE_MSX1 = 0;
+const MACHINE_NMS8250 = 1;
+const MACHINE_OMEGA_MSX2 = 2;
+const DEFAULT_MACHINE = MACHINE_OMEGA_MSX2;
 
 const $ = id => document.getElementById(id);
 const canvas = $("screen");
@@ -513,7 +517,7 @@ create1983().then(m => {
   }
 
   ledPowerEl.classList.add("on");
-  setStatus("MSX1 booting - click the display for keyboard focus");
+  setStatus("Omega MSX2 booting - click the display for keyboard focus");
 
   framebufferPtr = m._poc_pixels();
   frameW = m._poc_width();
@@ -564,8 +568,9 @@ create1983().then(m => {
   }));
 
   const ramSelections = [
-    JS1983Hardware.defaultRamKb(0),
-    JS1983Hardware.defaultRamKb(1),
+    JS1983Hardware.defaultRamKb(MACHINE_MSX1),
+    JS1983Hardware.defaultRamKb(MACHINE_NMS8250),
+    JS1983Hardware.defaultRamKb(MACHINE_OMEGA_MSX2),
   ];
   for (let model = 0; model < ramSelections.length; ++model) {
     try {
@@ -576,7 +581,7 @@ create1983().then(m => {
       // Keep the native machine default when browser storage is unavailable.
     }
   }
-  let currentModel = 0;
+  let currentModel = DEFAULT_MACHINE;
   let audioCtx = null;
   let audioScheduler = null;
   let prevGamepad = null;
@@ -919,11 +924,21 @@ create1983().then(m => {
   }
 
   function machineReadyStatus(model) {
-    const prefix = model === 1
-      ? "Philips NMS 8250 ready - RainBIOS + WD2793"
-      : "MSX1 ready - C-BIOS";
+    let prefix;
+    if (model === MACHINE_OMEGA_MSX2)
+      prefix = "Omega MSX2 ready - RainBIOS + WD2793";
+    else if (model === MACHINE_NMS8250)
+      prefix = "Philips NMS 8250 ready - RainBIOS + WD2793";
+    else
+      prefix = "MSX1 ready - C-BIOS";
     return prefix + " - " +
       JS1983Hardware.formatRamKb(ramSelections[model]) + " RAM";
+  }
+
+  function machineSelectedMessage(model) {
+    if (model === MACHINE_OMEGA_MSX2) return "Omega MSX2 selected";
+    if (model === MACHINE_NMS8250) return "Philips NMS 8250 selected";
+    return "MSX1 (C-BIOS) selected";
   }
 
   function applyMemorySelection(ramKb, persist = true, announce = true) {
@@ -1006,9 +1021,7 @@ create1983().then(m => {
   modelEl.addEventListener("change", () => {
     const model = Number(modelEl.value);
     if (reinit(model)) {
-      showToast(model === 1
-        ? "Philips NMS 8250 selected"
-        : "MSX1 (C-BIOS) selected");
+      showToast(machineSelectedMessage(model));
     } else {
       modelEl.value = String(currentModel);
     }
@@ -1373,8 +1386,8 @@ create1983().then(m => {
       if (media.disk && !m._poc_has_floppy()) {
         if (media.machine !== null)
           throw new Error("selected machine has no floppy controller");
-        if (!reinit(1))
-          throw new Error("could not select the NMS 8250 floppy profile");
+        if (!reinit(MACHINE_OMEGA_MSX2))
+          throw new Error("could not select the Omega MSX2 floppy profile");
       }
 
       const [cartridge, cartridge2, disk, ide, sdA, sdB] = await Promise.all([
@@ -1450,12 +1463,8 @@ create1983().then(m => {
       } else if (cartridge || cartridge2) {
         showToast("Booting with server cartridge media");
       } else if (media.machine !== null) {
-        setStatus(media.machine === 1
-          ? "Philips NMS 8250 ready - selected by URL"
-          : "MSX1 (C-BIOS) ready - selected by URL");
-        showToast(media.machine === 1
-          ? "Philips NMS 8250 selected"
-          : "MSX1 (C-BIOS) selected");
+        setStatus(machineSelectedMessage(media.machine) + " by URL");
+        showToast(machineSelectedMessage(media.machine));
       } else {
         setStatus("URL extensions applied - machine reset");
         showToast("URL extensions applied");
@@ -1702,6 +1711,34 @@ create1983().then(m => {
       document.exitPointerLock();
       return;
     }
+    if (event.code === "F3" && !event.shiftKey &&
+        document.activeElement === canvas) {
+      event.preventDefault();
+      if (event.repeat) return;
+      startAudio();
+      const bank = m._poc_flip_omega_unified_bank();
+      if (bank < 0) {
+        setStatus("F3 requires the Omega unified ROM machine");
+        showToast("No unified ROM is active");
+        return;
+      }
+      resetAudioQueue();
+      frameClock.reset();
+      releaseAllJoy();
+      releaseAllVirtualKeys();
+      const half = bank ? "upper" : "lower";
+      const range = bank ? "40000h-7FFFFh" : "00000h-3FFFFh";
+      setStatus(
+        "Omega ROM bank " + (bank + 1) + "/2 - " + half +
+        " 256 KiB - JP1 " + (bank ? "on" : "off") + " - " + range +
+        " - rainbios_omega.rom"
+      );
+      showToast(
+        "ROM bank " + (bank + 1) + "/2 - " + half +
+        " 256 KiB - JP1 " + (bank ? "on" : "off")
+      );
+      return;
+    }
     const scancode = CODE2SCAN[event.code];
     if (scancode === undefined || document.activeElement !== canvas) return;
     event.preventDefault();
@@ -1849,7 +1886,7 @@ create1983().then(m => {
   updateFloppyUi();
   updateCartridgeAvailability();
   applyInputDevice(JS1983Hardware.INPUT_JOYSTICK, false);
-  setStatus("MSX1 (C-BIOS) ready - select NMS 8250 for floppy support");
+  setStatus(machineReadyStatus(currentModel));
   requestAnimationFrame(frame);
   bootstrapServerMedia();
 }).catch(error => {
