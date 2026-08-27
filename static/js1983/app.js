@@ -525,6 +525,9 @@ create1983().then(m => {
   const frameClock = JS1983Audio.createFrameClock(m._poc_frame_hz());
   const peripherals = JS1983Hardware.createPeripheralState();
   const modelEl = $("model");
+  const unifiedRomLoadEl = $("unifiedRomLoad");
+  const unifiedRomFileEl = $("unifiedRomFile");
+  const unifiedRomNameEl = $("unifiedRomName");
   const memoryExpansionEl = $("memoryExpansion");
   const memoryValueEl = $("memoryValue");
   const memoryMinimumEl = $("memoryMinimum");
@@ -582,6 +585,8 @@ create1983().then(m => {
     }
   }
   let currentModel = DEFAULT_MACHINE;
+  let omegaRomName = "rainbios_omega.rom";
+  let customOmegaRom = false;
   let audioCtx = null;
   let audioScheduler = null;
   let prevGamepad = null;
@@ -926,7 +931,7 @@ create1983().then(m => {
   function machineReadyStatus(model) {
     let prefix;
     if (model === MACHINE_OMEGA_MSX2)
-      prefix = "Omega MSX2 ready - RainBIOS + WD2793";
+      prefix = "Omega MSX2 ready - " + omegaRomName + " + WD2793";
     else if (model === MACHINE_NMS8250)
       prefix = "Philips NMS 8250 ready - RainBIOS + WD2793";
     else
@@ -939,6 +944,15 @@ create1983().then(m => {
     if (model === MACHINE_OMEGA_MSX2) return "Omega MSX2 selected";
     if (model === MACHINE_NMS8250) return "Philips NMS 8250 selected";
     return "MSX1 (C-BIOS) selected";
+  }
+
+  function updateUnifiedRomName() {
+    unifiedRomNameEl.textContent =
+      (customOmegaRom ? "Uploaded: " : "Bundled: ") + omegaRomName;
+    unifiedRomNameEl.title =
+      (customOmegaRom ? "Uploaded unified ROM: " : "Bundled unified ROM: ") +
+      omegaRomName;
+    unifiedRomNameEl.dataset.custom = String(customOmegaRom);
   }
 
   function applyMemorySelection(ramKb, persist = true, announce = true) {
@@ -1025,6 +1039,56 @@ create1983().then(m => {
     } else {
       modelEl.value = String(currentModel);
     }
+  });
+
+  function installOmegaUnifiedRom(data) {
+    const pointer = m._malloc(data.byteLength);
+    if (!pointer) throw new Error("not enough browser memory for the ROM");
+    try {
+      m.HEAPU8.set(data, pointer);
+      if (m._poc_install_omega_unified_rom(pointer, data.byteLength) !== 0)
+        throw new Error("the unified ROM could not be installed");
+    } finally {
+      m._free(pointer);
+    }
+  }
+
+  async function loadOmegaUnifiedRom(file) {
+    if (!file) return;
+    try {
+      JS1983Hardware.validateOmegaUnifiedRomSize(file.size);
+      const data = new Uint8Array(await file.arrayBuffer());
+      JS1983Hardware.validateOmegaUnifiedRomSize(data.byteLength);
+      if (currentModel !== MACHINE_OMEGA_MSX2 &&
+          !reinit(MACHINE_OMEGA_MSX2))
+        throw new Error("the Omega MSX2 profile could not be selected");
+      installOmegaUnifiedRom(data);
+      omegaRomName = file.name;
+      customOmegaRom = true;
+      updateUnifiedRomName();
+      resetAudioQueue();
+      frameClock.setRate(m._poc_frame_hz());
+      frameClock.reset();
+      releaseAllJoy();
+      releaseAllVirtualKeys();
+      updateScreenModeReadout();
+      setStatus(
+        "Omega MSX2 rebooted - " + file.name +
+        " - lower 256 KiB bank (JP1 off)"
+      );
+      showToast("Unified ROM loaded - rebooting lower bank");
+      canvas.focus();
+    } catch (error) {
+      setStatus("Unified ROM load failed: " + error.message);
+      showToast("Could not load " + file.name);
+    } finally {
+      unifiedRomFileEl.value = "";
+    }
+  }
+
+  unifiedRomLoadEl.addEventListener("click", () => unifiedRomFileEl.click());
+  unifiedRomFileEl.addEventListener("change", () => {
+    loadOmegaUnifiedRom(unifiedRomFileEl.files[0]);
   });
 
   memoryExpansionEl.addEventListener("input", () => {
@@ -1731,7 +1795,7 @@ create1983().then(m => {
       setStatus(
         "Omega ROM bank " + (bank + 1) + "/2 - " + half +
         " 256 KiB - JP1 " + (bank ? "on" : "off") + " - " + range +
-        " - rainbios_omega.rom"
+        " - " + omegaRomName
       );
       showToast(
         "ROM bank " + (bank + 1) + "/2 - " + half +
@@ -1883,6 +1947,7 @@ create1983().then(m => {
   }
 
   updateFrameRateLabel();
+  updateUnifiedRomName();
   updateFloppyUi();
   updateCartridgeAvailability();
   applyInputDevice(JS1983Hardware.INPUT_JOYSTICK, false);

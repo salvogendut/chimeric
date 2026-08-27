@@ -195,13 +195,23 @@
       <div class="model-bank">
         <label for="model">Machine</label>
         <div class="machine-controls">
-          <div class="select-shell">
-            <select id="model">
-              <option value="0">MSX1 (C-BIOS)</option>
-              <option value="1">Philips NMS 8250 (RainBIOS)</option>
-              <option value="2" selected>Omega MSX2 (RainBIOS)</option>
-            </select>
+          <div class="machine-select-row">
+            <div class="select-shell">
+              <select id="model">
+                <option value="0">MSX1 (C-BIOS)</option>
+                <option value="1">Philips NMS 8250 (RainBIOS)</option>
+                <option value="2" selected>Omega MSX2 (RainBIOS)</option>
+              </select>
+            </div>
+            <button id="unifiedRomLoad" class="unified-rom-key" type="button"
+                    title="Upload a 512 KiB Omega unified ROM">
+              <strong>ROM</strong><small>Upload</small>
+            </button>
+            <input class="visually-hidden" type="file" id="unifiedRomFile"
+                   accept=".rom,.ROM,.bin,.BIN,application/octet-stream">
           </div>
+          <output id="unifiedRomName" class="unified-rom-name"
+                  title="Bundled unified ROM">Bundled: rainbios_omega.rom</output>
           <label class="memory-expansion" for="memoryExpansion">
             <span class="memory-caption">
               <strong>System RAM</strong>

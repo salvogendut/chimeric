@@ -155,6 +155,7 @@ label.small-key:focus-within {
 .model-bank > label { padding-top: 13px; }
 .model-bank > label, .display-label { color: #a8aaa5; font: 700 9px/1 ui-monospace, monospace; letter-spacing: .17em; text-transform: uppercase; }
 .machine-controls { display: grid; min-width: 0; gap: 9px; }
+.machine-select-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 7px; }
 .select-shell { position: relative; }
 .select-shell::after { position: absolute; top: 50%; right: 11px; content: ""; width: 0; height: 0; border: 4px solid transparent; border-top-color: var(--amber); transform: translateY(-15%); pointer-events: none; }
 select {
@@ -169,6 +170,32 @@ select {
   box-shadow: inset 0 1px 5px #000, 0 1px rgba(255,255,255,.08);
   font: 600 12px/1 ui-monospace, monospace;
 }
+.unified-rom-key {
+  min-width: 58px;
+  min-height: 36px;
+  padding: 5px 8px 4px;
+  border: 1px solid #070808;
+  border-radius: 4px;
+  color: #d7d6ce;
+  background: linear-gradient(#55595a, #2d3032 52%, #232527 53%);
+  box-shadow: inset 0 1px rgba(255,255,255,.18), 0 2px 0 #0c0d0e;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+.unified-rom-key:hover { color: #fff; background: linear-gradient(#666a6b, #343739 52%, #292b2d 53%); }
+.unified-rom-key:active { transform: translateY(1px); box-shadow: inset 0 1px rgba(255,255,255,.11), 0 1px 0 #0c0d0e; }
+.unified-rom-key strong,
+.unified-rom-key small { display: block; font-family: ui-monospace, monospace; line-height: 1; }
+.unified-rom-key strong { color: var(--amber); font-size: 9px; letter-spacing: .09em; }
+.unified-rom-key small { margin-top: 4px; color: #929694; font-size: 7px; font-weight: 700; letter-spacing: .06em; }
+.unified-rom-name {
+  overflow: hidden;
+  color: #777b79;
+  font: 600 8px/1.2 ui-monospace, monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.unified-rom-name[data-custom="true"] { color: var(--amber); }
 
 .memory-expansion { display: grid; min-width: 0; gap: 5px; cursor: pointer; }
 .memory-caption,

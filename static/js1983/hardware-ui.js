@@ -7,6 +7,7 @@
 
   const INPUT_JOYSTICK = 'joystick';
   const INPUT_MOUSE = 'mouse';
+  const OMEGA_UNIFIED_ROM_SIZE = 512 * 1024;
   const RAM_SIZES_KB = Object.freeze([
     16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
   ]);
@@ -38,6 +39,16 @@
   function formatRamKb(value) {
     const ramKb = Number(value);
     return ramKb >= 1024 ? (ramKb / 1024) + ' MiB' : ramKb + ' KiB';
+  }
+
+  function validateOmegaUnifiedRomSize(value) {
+    const size = Number(value);
+    if (!Number.isInteger(size) || size !== OMEGA_UNIFIED_ROM_SIZE) {
+      throw new Error(
+        'unified ROM must be exactly 512 KiB (524288 bytes)'
+      );
+    }
+    return size;
   }
 
   function normalizeInputDevice(device) {
@@ -92,11 +103,13 @@
   return {
     INPUT_JOYSTICK,
     INPUT_MOUSE,
+    OMEGA_UNIFIED_ROM_SIZE,
     RAM_SIZES_KB,
     ramSizesForModel,
     normalizeRamKb,
     defaultRamKb,
     formatRamKb,
+    validateOmegaUnifiedRomSize,
     normalizeInputDevice,
     createPeripheralState,
   };
