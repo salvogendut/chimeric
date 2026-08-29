@@ -39,7 +39,7 @@
     if (!params.has('extensions')) return null;
     const value = params.get('extensions').trim();
     if (!value) return [];
-    const supported = new Set(['sunrise', 'sdmapper', 'unapi']);
+    const supported = new Set(['sunrise', 'sdmapper', 'powergraph', 'unapi']);
     const extensions = [];
     for (const item of value.split(',')) {
       const extension = item.trim().toLowerCase();
@@ -97,15 +97,19 @@
   function resolveStartupExtensions(media, current = {}) {
     let sunrise = Boolean(current.sunrise);
     let sdMapper = Boolean(current.sdMapper);
+    let powergraph = Boolean(current.powergraph);
     let unapi = Boolean(current.unapi);
     if (media.extensions !== null) {
       sunrise = media.extensions.includes('sunrise');
       sdMapper = media.extensions.includes('sdmapper');
+      powergraph = media.extensions.includes('powergraph');
       unapi = media.extensions.includes('unapi');
     }
     if (media.ide) sunrise = true;
     if (media.sdA || media.sdB) sdMapper = true;
-    return { sunrise, sdMapper, unapi };
+    if ([sunrise, sdMapper, powergraph].filter(Boolean).length > 2)
+      throw new Error('only two cartridge extensions can be enabled');
+    return { sunrise, sdMapper, powergraph, unapi };
   }
 
   function filenameFromUrl(value, fallback) {

@@ -116,6 +116,42 @@
       </div>
     </section>
 
+    <section class="expansion-device powergraph-device" aria-labelledby="powergraphTitle">
+      <div class="expansion-device-heading">
+        <span class="expansion-device-mark" aria-hidden="true">G9K</span>
+        <div>
+          <h3 id="powergraphTitle">PowerGraph V9990</h3>
+          <span id="powergraphSlotText">Slot I / 512 KB VRAM</span>
+        </div>
+      </div>
+      <div class="expansion-device-controls">
+        <label class="toggle-control expansion-device-toggle">
+          <input type="checkbox" id="powergraphToggle">
+          <span class="toggle-track"><i></i></span>
+          <span><strong>Video cartridge</strong><small id="powergraphState" aria-live="polite">Disabled</small></span>
+        </label>
+        <p class="firmware-note"><strong>Video output</strong><span>V9990 / 512 KB VRAM</span></p>
+        <fieldset class="expansion-mode-field" id="powergraphOutputField">
+          <legend>Display source</legend>
+          <div class="segmented-control">
+            <label>
+              <input type="radio" name="powergraphOutput" value="auto" checked>
+              <span>Auto</span>
+            </label>
+            <label>
+              <input type="radio" name="powergraphOutput" value="msx">
+              <span>MSX VDP</span>
+            </label>
+            <label>
+              <input type="radio" name="powergraphOutput" value="v9990">
+              <span>V9990</span>
+            </label>
+          </div>
+        </fieldset>
+        <p class="extension-help">Uses the PowerGraph video output when software selects it. No firmware image is required.</p>
+      </div>
+    </section>
+
     <section class="expansion-device unapi-device" aria-labelledby="unapiTitle">
       <div class="expansion-device-heading">
         <span class="expansion-device-mark" aria-hidden="true">NET</span>

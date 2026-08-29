@@ -47,6 +47,12 @@ const sdMapperToggleEl = $("sdMapperToggle");
 const sdMapperStateEl = $("sdMapperState");
 const sdMapperSlotTextEl = $("sdMapperSlotText");
 const sdAccessModeEls = [...document.querySelectorAll('input[name="sdAccessMode"]')];
+const powergraphToggleEl = $("powergraphToggle");
+const powergraphStateEl = $("powergraphState");
+const powergraphSlotTextEl = $("powergraphSlotText");
+const powergraphOutputEls = [
+  ...document.querySelectorAll('input[name="powergraphOutput"]'),
+];
 const unapiToggleEl = $("unapiToggle");
 const unapiStateEl = $("unapiState");
 const unapiEndpointEl = $("unapiEndpoint");
@@ -83,6 +89,9 @@ const SUNRISE_STORAGE_KEY = "javascript1983.expansion.sunrise";
 const IDE_ACCESS_STORAGE_KEY = "javascript1983.expansion.ideAccessMode";
 const SD_MAPPER_STORAGE_KEY = "javascript1983.expansion.sdMapper";
 const SD_ACCESS_STORAGE_KEY = "javascript1983.expansion.sdAccessMode";
+const POWERGRAPH_STORAGE_KEY = "javascript1983.expansion.powergraph";
+const POWERGRAPH_OUTPUT_STORAGE_KEY =
+  "javascript1983.expansion.powergraphOutput";
 const UNAPI_STORAGE_KEY = "javascript1983.expansion.unapi";
 const UNAPI_ENDPOINT_STORAGE_KEY = "javascript1983.expansion.unapiEndpoint";
 const RAM_STORAGE_PREFIX = "javascript1983.machine.ram.";
@@ -90,11 +99,15 @@ let sunriseEnabled = false;
 let ideAccessMode = "readonly";
 let sdMapperEnabled = false;
 let sdAccessMode = "readonly";
+let powergraphEnabled = false;
+let powergraphOutputMode = "auto";
 let unapiEnabled = false;
 let unapiEndpoint = unapiBridge ? unapiBridge.endpoint : "";
 let unapiCertificateUrl = "";
 let applySunriseHardware = () => {};
 let applySdMapperHardware = () => {};
+let applyPowergraphHardware = () => {};
+let applyPowergraphVideoSourceHardware = () => {};
 let applyUnapiHardware = () => {};
 
 try {
@@ -104,6 +117,11 @@ try {
   sdMapperEnabled = localStorage.getItem(SD_MAPPER_STORAGE_KEY) === "true";
   sdAccessMode = localStorage.getItem(SD_ACCESS_STORAGE_KEY) === "readwrite"
     ? "readwrite" : "readonly";
+  powergraphEnabled = localStorage.getItem(POWERGRAPH_STORAGE_KEY) === "true";
+  const storedPowergraphOutput =
+    localStorage.getItem(POWERGRAPH_OUTPUT_STORAGE_KEY);
+  if (["auto", "msx", "v9990"].includes(storedPowergraphOutput))
+    powergraphOutputMode = storedPowergraphOutput;
   unapiEnabled = localStorage.getItem(UNAPI_STORAGE_KEY) === "true";
   const storedEndpoint = localStorage.getItem(UNAPI_ENDPOINT_STORAGE_KEY);
   if (storedEndpoint !== null) unapiEndpoint = storedEndpoint;
@@ -113,20 +131,62 @@ try {
 
 function updateExpansionIndicator() {
   expansionButtonEl.classList.toggle(
-    "has-expansion", sunriseEnabled || sdMapperEnabled || unapiEnabled
+    "has-expansion",
+    sunriseEnabled || sdMapperEnabled || powergraphEnabled || unapiEnabled
   );
 }
 
+const CARTRIDGE_EXTENSION_ORDER = [
+  "Sunrise IDE", "SD Mapper V2", "PowerGraph V9990",
+];
+
+function cartridgeExtensionEnabled(name) {
+  if (name === "Sunrise IDE") return sunriseEnabled;
+  if (name === "SD Mapper V2") return sdMapperEnabled;
+  return powergraphEnabled;
+}
+
+function cartridgeExtensionNames() {
+  return CARTRIDGE_EXTENSION_ORDER.filter(cartridgeExtensionEnabled);
+}
+
+function cartridgeExtensionSlot(name) {
+  const selected = CARTRIDGE_EXTENSION_ORDER.filter(
+    candidate => candidate === name || cartridgeExtensionEnabled(candidate)
+  );
+  if (selected.length > 2) return -1;
+  return selected.indexOf(name);
+}
+
+function cartridgeRoman(slot) {
+  return slot === 0 ? "I" : slot === 1 ? "II" : "unavailable";
+}
+
 function updateCartridgeExtensionLabels() {
-  sunriseSlotTextEl.textContent = "Slot I / ATA-IDE";
-  sdMapperSlotTextEl.textContent =
-    (sunriseEnabled ? "Slot II" : "Slot I") + " / 512 KB RAM";
+  const sunriseSlot = cartridgeExtensionSlot("Sunrise IDE");
+  const sdMapperSlot = cartridgeExtensionSlot("SD Mapper V2");
+  const powergraphSlot = cartridgeExtensionSlot("PowerGraph V9990");
+  sunriseSlotTextEl.textContent = sunriseSlot < 0
+    ? "No slot available / ATA-IDE"
+    : "Slot " + cartridgeRoman(sunriseSlot) + " / ATA-IDE";
+  sdMapperSlotTextEl.textContent = sdMapperSlot < 0
+    ? "No slot available / 512 KB RAM"
+    : "Slot " + cartridgeRoman(sdMapperSlot) + " / 512 KB RAM";
+  powergraphSlotTextEl.textContent = powergraphSlot < 0
+    ? "No slot available / 512 KB VRAM"
+    : "Slot " + cartridgeRoman(powergraphSlot) + " / 512 KB VRAM";
+  const count = cartridgeExtensionNames().length;
+  sunriseToggleEl.disabled = !sunriseEnabled && count >= 2;
+  sdMapperToggleEl.disabled = !sdMapperEnabled && count >= 2;
+  powergraphToggleEl.disabled = !powergraphEnabled && count >= 2;
 }
 
 function updateSunriseUi() {
   sunriseToggleEl.checked = sunriseEnabled;
   sunriseStateEl.textContent = sunriseEnabled
-    ? "Enabled - cartridge I reserved" : "Disabled";
+    ? "Enabled - cartridge " +
+      cartridgeRoman(cartridgeExtensionSlot("Sunrise IDE")) + " reserved"
+    : "Disabled";
   for (const input of ideAccessModeEls)
     input.checked = input.value === ideAccessMode;
   const slot = $("ideSlot");
@@ -142,6 +202,7 @@ function setSunriseEnabled(enabled, persist = true, announce = false) {
   applySunriseHardware(sunriseEnabled);
   updateSunriseUi();
   updateSdMapperUi();
+  updatePowergraphUi();
   if (persist) {
     try {
       localStorage.setItem(SUNRISE_STORAGE_KEY, String(sunriseEnabled));
@@ -167,7 +228,8 @@ function setIdeAccessMode(mode, persist = true, announce = false) {
 function updateSdMapperUi() {
   sdMapperToggleEl.checked = sdMapperEnabled;
   sdMapperStateEl.textContent = sdMapperEnabled
-    ? "Enabled - cartridge " + (sunriseEnabled ? "II" : "I") + " reserved"
+    ? "Enabled - cartridge " +
+      cartridgeRoman(cartridgeExtensionSlot("SD Mapper V2")) + " reserved"
     : "Disabled";
   for (const input of sdAccessModeEls)
     input.checked = input.value === sdAccessMode;
@@ -185,6 +247,8 @@ function setSdMapperEnabled(enabled, persist = true, announce = false) {
   sdMapperEnabled = Boolean(enabled);
   applySdMapperHardware(sdMapperEnabled);
   updateSdMapperUi();
+  updateSunriseUi();
+  updatePowergraphUi();
   if (persist) {
     try {
       localStorage.setItem(SD_MAPPER_STORAGE_KEY, String(sdMapperEnabled));
@@ -194,6 +258,59 @@ function setSdMapperEnabled(enabled, persist = true, announce = false) {
     showToast(sdMapperEnabled
       ? "SD Mapper V2 enabled in cartridge " + (sunriseEnabled ? "II" : "I")
       : "SD Mapper V2 disabled");
+}
+
+function updatePowergraphUi() {
+  powergraphToggleEl.checked = powergraphEnabled;
+  powergraphStateEl.textContent = powergraphEnabled
+    ? "Enabled - cartridge " +
+      cartridgeRoman(cartridgeExtensionSlot("PowerGraph V9990")) +
+      " reserved"
+    : "Disabled";
+  for (const input of powergraphOutputEls)
+    input.checked = input.value === powergraphOutputMode;
+  updateCartridgeExtensionLabels();
+  updateExpansionIndicator();
+}
+
+function powergraphOutputLabel(mode) {
+  if (mode === "msx") return "MSX VDP";
+  if (mode === "v9990") return "V9990";
+  return "Auto";
+}
+
+function setPowergraphOutputMode(mode, persist = true, announce = false) {
+  powergraphOutputMode = ["msx", "v9990"].includes(mode) ? mode : "auto";
+  applyPowergraphVideoSourceHardware(powergraphOutputMode);
+  updatePowergraphUi();
+  if (persist) {
+    try {
+      localStorage.setItem(
+        POWERGRAPH_OUTPUT_STORAGE_KEY, powergraphOutputMode
+      );
+    } catch (_) {}
+  }
+  if (announce)
+    showToast("PowerGraph display source: " +
+              powergraphOutputLabel(powergraphOutputMode));
+}
+
+function setPowergraphEnabled(enabled, persist = true, announce = false) {
+  powergraphEnabled = Boolean(enabled);
+  applyPowergraphHardware(powergraphEnabled);
+  updateSunriseUi();
+  updateSdMapperUi();
+  updatePowergraphUi();
+  if (persist) {
+    try {
+      localStorage.setItem(POWERGRAPH_STORAGE_KEY, String(powergraphEnabled));
+    } catch (_) {}
+  }
+  if (announce)
+    showToast(powergraphEnabled
+      ? "PowerGraph V9990 enabled in cartridge " +
+        cartridgeRoman(cartridgeExtensionSlot("PowerGraph V9990"))
+      : "PowerGraph V9990 disabled");
 }
 
 function setSdAccessMode(mode, persist = true, announce = false) {
@@ -307,6 +424,15 @@ document.addEventListener("keydown", event => {
 sdMapperToggleEl.addEventListener("change", () => {
   setSdMapperEnabled(sdMapperToggleEl.checked, true, true);
 });
+powergraphToggleEl.addEventListener("change", () => {
+  setPowergraphEnabled(powergraphToggleEl.checked, true, true);
+});
+for (const input of powergraphOutputEls) {
+  input.addEventListener("change", () => {
+    if (input.checked)
+      setPowergraphOutputMode(input.value, true, true);
+  });
+}
 sunriseToggleEl.addEventListener("change", () => {
   setSunriseEnabled(sunriseToggleEl.checked, true, true);
 });
@@ -612,11 +738,13 @@ create1983().then(m => {
       {
         sunrise: sunriseEnabled,
         sdMapper: sdMapperEnabled,
+        powergraph: powergraphEnabled,
         unapi: unapiEnabled,
       }
     );
     sunriseEnabled = startupExtensions.sunrise;
     sdMapperEnabled = startupExtensions.sdMapper;
+    powergraphEnabled = startupExtensions.powergraph;
     unapiEnabled = startupExtensions.unapi;
     if (startupMedia.ideMode !== null)
       ideAccessMode = startupMedia.ideMode;
@@ -805,14 +933,12 @@ create1983().then(m => {
   }
 
   function syncCartridgeExtensions() {
-    const owners = [];
-    if (sunriseEnabled) owners.push("Sunrise IDE");
-    if (sdMapperEnabled) owners.push("SD Mapper V2");
-    peripherals.setCartridgeExtensions(owners);
+    peripherals.setCartridgeExtensions(cartridgeExtensionNames());
     clearAllCartUi();
     updateCartridgeAvailability();
     updateSunriseUi();
     updateSdMapperUi();
+    updatePowergraphUi();
   }
 
   function clearIdeUi() {
@@ -1020,6 +1146,7 @@ create1983().then(m => {
     clearCassUi();
     applySunriseHardware(sunriseEnabled);
     applySdMapperHardware(sdMapperEnabled);
+    applyPowergraphHardware(powergraphEnabled);
     applyUnapiHardware(unapiEnabled);
     remountIde();
     remountSdCards();
@@ -1351,6 +1478,10 @@ create1983().then(m => {
         m._poc_eject_cartridge(1);
         clearCartUi(1);
       }
+      if (powergraphEnabled && m._poc_cartridge_loaded(1)) {
+        m._poc_eject_cartridge(1);
+        clearCartUi(1);
+      }
     }
 
     if (Boolean(m._poc_sunrise_enabled()) !== requested)
@@ -1361,6 +1492,7 @@ create1983().then(m => {
     frameClock.reset();
     releaseAllJoy();
     updateIdeAvailability();
+    framebufferPtr = m._poc_pixels();
     if (requested && !sunriseEnabled)
       setStatus("Sunrise IDE firmware could not be installed");
   };
@@ -1382,6 +1514,10 @@ create1983().then(m => {
         m._poc_eject_cartridge(slot);
         clearCartUi(slot);
       }
+      if (powergraphEnabled && slot === 0 && m._poc_cartridge_loaded(1)) {
+        m._poc_eject_cartridge(1);
+        clearCartUi(1);
+      }
     }
 
     if (Boolean(m._poc_sd_mapper_enabled()) !== requested)
@@ -1395,8 +1531,48 @@ create1983().then(m => {
     updateCartridgeAvailability();
     updateSdCardAvailability();
     updateSdMapperUi();
+    framebufferPtr = m._poc_pixels();
     if (requested && !actual)
       setStatus("SD Mapper V2 firmware could not be installed");
+  };
+
+  applyPowergraphHardware = enabled => {
+    const requested = Boolean(enabled);
+    if (requested) {
+      const slot = (sunriseEnabled ? 1 : 0) + (sdMapperEnabled ? 1 : 0);
+      if (slot < 2 && m._poc_cartridge_loaded(slot)) {
+        m._poc_eject_cartridge(slot);
+        clearCartUi(slot);
+      }
+    }
+
+    if (Boolean(m._poc_powergraph_v9990_enabled()) !== requested)
+      m._poc_set_powergraph_v9990(requested ? 1 : 0);
+    powergraphEnabled = Boolean(m._poc_powergraph_v9990_enabled());
+    applyPowergraphVideoSourceHardware(powergraphOutputMode);
+    syncCartridgeExtensions();
+    framebufferPtr = m._poc_pixels();
+    frameW = m._poc_width();
+    frameH = m._poc_height();
+    resetAudioQueue();
+    frameClock.reset();
+    releaseAllJoy();
+    updateScreenModeReadout();
+    if (requested && !powergraphEnabled)
+      setStatus("PowerGraph V9990 needs a free cartridge slot");
+  };
+
+  applyPowergraphVideoSourceHardware = mode => {
+    const source = mode === "msx" ? 1 : mode === "v9990" ? 2 : 0;
+    if (m._poc_set_powergraph_video_source(source) < 0)
+      return;
+    const actual = m._poc_powergraph_video_source();
+    powergraphOutputMode = actual === 1 ? "msx" :
+      actual === 2 ? "v9990" : "auto";
+    framebufferPtr = m._poc_pixels();
+    frameW = m._poc_width();
+    frameH = m._poc_height();
+    updateScreenModeReadout();
   };
 
   applyUnapiHardware = enabled => {
@@ -1419,6 +1595,7 @@ create1983().then(m => {
       startupMediaError = new Error("stored RAM configuration is unavailable");
     applySunriseHardware(sunriseEnabled);
     applySdMapperHardware(sdMapperEnabled);
+    applyPowergraphHardware(powergraphEnabled);
     applyUnapiHardware(unapiEnabled);
   }
 
@@ -1913,6 +2090,7 @@ create1983().then(m => {
     updateLed();
     updateExpansionActivity();
 
+    framebufferPtr = m._poc_pixels();
     const w = m._poc_width();
     const h = m._poc_height();
     if (w !== frameW || h !== frameH) {
