@@ -39,7 +39,9 @@
     if (!params.has('extensions')) return null;
     const value = params.get('extensions').trim();
     if (!value) return [];
-    const supported = new Set(['sunrise', 'sdmapper', 'powergraph', 'unapi']);
+    const supported = new Set([
+      'sunrise', 'scsi', 'sdmapper', 'powergraph', 'unapi'
+    ]);
     const extensions = [];
     for (const item of value.split(',')) {
       const extension = item.trim().toLowerCase();
@@ -66,16 +68,36 @@
     return value;
   }
 
+  function validateScsiMode(value, hasImage) {
+    if (value === null) return null;
+    if (!hasImage) throw new Error('scsimode requires a scsi URL');
+    if (value !== 'readonly' && value !== 'readwrite')
+      throw new Error('scsimode must be readonly or readwrite');
+    return value;
+  }
+
+  function validateScsiTargetId(value) {
+    if (value === null) return null;
+    if (!/^[0-6]$/.test(value))
+      throw new Error('scsiid must be an integer from 0 through 6');
+    return Number(value);
+  }
+
   function parseStartupMedia(search, baseUrl) {
     const params = new URLSearchParams(search || '');
     const media = {
       machine: validateMachine(
         params.has('machine') ? params.get('machine') : null
       ),
+      unifiedRom: resolveHttpUrl(
+        params.get('unifiedrom'), baseUrl, 'unifiedrom'
+      ),
       disk: resolveHttpUrl(params.get('disk'), baseUrl, 'disk'),
       cartridge: resolveHttpUrl(params.get('cartridge'), baseUrl, 'cartridge'),
       cartridge2: resolveHttpUrl(params.get('cartridge2'), baseUrl, 'cartridge2'),
       ide: resolveHttpUrl(params.get('ide'), baseUrl, 'ide'),
+      scsiRom: resolveHttpUrl(params.get('scsirom'), baseUrl, 'scsirom'),
+      scsi: resolveHttpUrl(params.get('scsi'), baseUrl, 'scsi'),
       sdA: resolveHttpUrl(params.get('sda'), baseUrl, 'sda'),
       sdB: resolveHttpUrl(params.get('sdb'), baseUrl, 'sdb'),
       extensions: validateExtensions(params),
@@ -89,6 +111,18 @@
       params.has('idemode') ? params.get('idemode').trim().toLowerCase() : null,
       Boolean(media.ide)
     );
+    media.scsiMode = validateScsiMode(
+      params.has('scsimode')
+        ? params.get('scsimode').trim().toLowerCase() : null,
+      Boolean(media.scsi)
+    );
+    media.scsiTargetId = validateScsiTargetId(
+      params.has('scsiid') ? params.get('scsiid').trim() : null
+    );
+    if (media.scsi && !media.scsiRom)
+      throw new Error('scsi requires a scsirom URL');
+    if (media.extensions && media.extensions.includes('scsi') && !media.scsiRom)
+      throw new Error('the scsi extension requires a scsirom URL');
     if (media.autorun && !media.disk)
       throw new Error('autorun requires a disk URL');
     return media;
@@ -96,20 +130,23 @@
 
   function resolveStartupExtensions(media, current = {}) {
     let sunrise = Boolean(current.sunrise);
+    let scsi = Boolean(current.scsi);
     let sdMapper = Boolean(current.sdMapper);
     let powergraph = Boolean(current.powergraph);
     let unapi = Boolean(current.unapi);
     if (media.extensions !== null) {
       sunrise = media.extensions.includes('sunrise');
+      scsi = media.extensions.includes('scsi');
       sdMapper = media.extensions.includes('sdmapper');
       powergraph = media.extensions.includes('powergraph');
       unapi = media.extensions.includes('unapi');
     }
     if (media.ide) sunrise = true;
+    if (media.scsiRom || media.scsi) scsi = true;
     if (media.sdA || media.sdB) sdMapper = true;
-    if ([sunrise, sdMapper, powergraph].filter(Boolean).length > 2)
+    if ([sunrise, scsi, sdMapper, powergraph].filter(Boolean).length > 2)
       throw new Error('only two cartridge extensions can be enabled');
-    return { sunrise, sdMapper, powergraph, unapi };
+    return { sunrise, scsi, sdMapper, powergraph, unapi };
   }
 
   function filenameFromUrl(value, fallback) {

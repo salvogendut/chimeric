@@ -623,6 +623,41 @@ body.expansion-open .expansion-panel {
 .firmware-note a { text-align: right; }
 .firmware-note a { color: #aebfb1; text-underline-offset: 2px; }
 .firmware-note a:hover { color: #d9e6db; }
+
+.extension-firmware-lamp {
+  display: grid;
+  width: 25px;
+  height: 19px;
+  place-items: center;
+  border: 1px solid #484d49;
+  background: #171a18;
+  color: #d8b64f;
+  font: 700 6px/1 ui-monospace, monospace;
+  font-style: normal;
+}
+
+.extension-firmware-slot { grid-template-columns: 25px minmax(0, 1fr) auto; }
+
+.expansion-select-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: #adb1ad;
+  font: 700 9px/1 ui-monospace, monospace;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.expansion-select-field select {
+  min-width: 74px;
+  border: 1px solid #414642;
+  border-radius: 2px;
+  padding: 7px 24px 7px 9px;
+  background: #151816;
+  color: #d9dbd5;
+  font: 700 9px/1 ui-monospace, monospace;
+}
 .expansion-mode-field { min-width: 0; margin: 0; padding: 0; border: 0; }
 .expansion-mode-field legend,
 .expansion-text-field > span {

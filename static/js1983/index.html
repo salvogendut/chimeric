@@ -67,6 +67,75 @@
       </div>
     </section>
 
+    <section class="expansion-device scsi-device" aria-labelledby="scsiTitle">
+      <div class="expansion-device-heading">
+        <span class="expansion-device-mark" aria-hidden="true">SCSI</span>
+        <div>
+          <h3 id="scsiTitle">MSX SCSI</h3>
+          <span id="scsiSlotText">Slot I / NCR Z5380</span>
+        </div>
+      </div>
+      <div class="expansion-device-controls">
+        <label class="toggle-control expansion-device-toggle">
+          <input type="checkbox" id="scsiToggle" disabled>
+          <span class="toggle-track"><i></i></span>
+          <span><strong>Cartridge power</strong><small id="scsiState" aria-live="polite">Controller ROM required</small></span>
+        </label>
+        <div class="extension-media-list">
+          <article id="scsiRomSlot" class="extension-media-slot extension-firmware-slot">
+            <i class="extension-firmware-lamp" aria-hidden="true">ROM</i>
+            <div><strong>Controller firmware</strong><span id="scsiRomName">Bundled ROM loading</span></div>
+            <label class="extension-small-key" for="scsiRomFile">Load</label>
+            <input class="visually-hidden" type="file" id="scsiRomFile"
+                   accept=".rom,.ROM,.bin,.BIN,application/octet-stream">
+          </article>
+        </div>
+        <label class="expansion-select-field" for="scsiTargetId">
+          <span>SCSI target ID</span>
+          <select id="scsiTargetId">
+            <option value="0" selected>0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </label>
+        <label class="expansion-select-field" for="scsiIoBase">
+          <span>Controller I/O base</span>
+          <select id="scsiIoBase">
+            <option value="48" selected>30h-37h</option>
+            <option value="208">D0h-D7h</option>
+          </select>
+        </label>
+        <fieldset class="expansion-mode-field">
+          <legend>SCSI image access</legend>
+          <div class="segmented-control">
+            <label>
+              <input type="radio" name="scsiAccessMode" value="readonly" checked>
+              <span>Read-only</span>
+            </label>
+            <label>
+              <input type="radio" name="scsiAccessMode" value="readwrite">
+              <span>Read/write</span>
+            </label>
+          </div>
+        </fieldset>
+        <div class="extension-media-list">
+          <article id="scsiDiskSlot" class="extension-media-slot" aria-disabled="true">
+            <i id="scsiLed" class="extension-activity-lamp" aria-hidden="true"></i>
+            <div><strong>SCSI disk</strong><span id="scsiDiskName">No image loaded</span></div>
+            <label class="extension-small-key" for="scsiDiskFile">Load</label>
+            <button id="scsiDiskEject" class="extension-small-key" type="button" disabled>Eject</button>
+            <input class="visually-hidden" type="file" id="scsiDiskFile" disabled
+                   accept=".img,.IMG,.hdd,.HDD,.hd,.HD,.bin,.BIN">
+          </article>
+        </div>
+        <p class="extension-help">Uses a user-supplied banked BERT-compatible controller ROM. Read/write disk changes are downloaded on safe ejection.</p>
+      </div>
+    </section>
+
     <section class="expansion-device sd-mapper-device" aria-labelledby="sdMapperTitle">
       <div class="expansion-device-heading">
         <span class="expansion-device-mark" aria-hidden="true">SD</span>
@@ -275,6 +344,7 @@
       <div class="activity-bank" aria-label="Activity indicators">
         <div><i id="ledA" class="led led-red"></i><span>Drive A</span></div>
         <div><i id="ledIde" class="led led-green"></i><span>IDE</span></div>
+        <div><i id="ledScsi" class="led led-amber"></i><span>SCSI</span></div>
         <div><i id="ledInput" class="led led-amber"></i><span>Input</span></div>
         <div><i id="ledAudio" class="led led-green"></i><span>Audio</span></div>
       </div>
