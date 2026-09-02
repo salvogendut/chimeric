@@ -269,7 +269,7 @@
       </div>
     </div>
     <div class="masthead-meta">
-      <span id="frameRateLabel">WASM / 60 HZ</span>
+      <span id="frameRateLabel">WASM / 50 HZ</span>
       <div class="theme-picker">
         <button id="themeButton" class="theme-button" type="button"
                 aria-haspopup="true" aria-expanded="false" aria-controls="themeMenu">
@@ -373,16 +373,16 @@
           <span>MSX monitor</span>
           <span id="screenMode">Sharp / Color</span>
         </div>
-        <div class="trinitron-console" aria-hidden="true">
-          <div class="trinitron-switches">
+        <div class="trinitron-console" aria-label="Monitor controls">
+          <div class="trinitron-switches" aria-hidden="true">
             <span><i></i><i></i><i></i><i></i></span>
             <small>Input&nbsp;&nbsp;&nbsp;Sync&nbsp;&nbsp;&nbsp;Display</small>
           </div>
-          <div class="trinitron-jacks">
+          <div class="trinitron-jacks" aria-hidden="true">
             <i></i><i></i><i></i>
             <small>RGB</small>
           </div>
-          <div class="trinitron-knobs">
+          <div class="trinitron-knobs" aria-hidden="true">
             <span><small>Aper</small><i></i></span>
             <span><small>Bright</small><i></i></span>
             <span><small>Chroma</small><i></i></span>
@@ -390,8 +390,14 @@
             <span><small>Contr</small><i></i></span>
             <span><small>Volume</small><i></i></span>
           </div>
-          <strong class="trinitron-sony">THONY</strong>
-          <div class="trinitron-power"><small>Power</small><i></i></div>
+          <button class="trinitron-standard-key" type="button"
+                  data-video-standard-toggle aria-pressed="false"
+                  title="Switch between PAL and NTSC">
+            <small>Standard</small>
+            <strong class="video-standard-name">PAL</strong>
+          </button>
+          <strong class="trinitron-sony" aria-hidden="true">THONY</strong>
+          <div class="trinitron-power" aria-hidden="true"><small>Power</small><i></i></div>
         </div>
       </div>
     </div>
@@ -532,6 +538,11 @@
         <button id="colorMode" class="wide-key color-mode-key" type="button" aria-pressed="false">
           <i class="mode-lamp" aria-hidden="true"></i>
           <span><strong id="colorModeName">Color display</strong><small>Switch to green monochrome</small></span>
+        </button>
+        <button class="wide-key video-standard-deck-key" type="button"
+                data-video-standard-toggle aria-pressed="false">
+          <i class="standard-lamp" aria-hidden="true"></i>
+          <span><strong class="video-standard-name">PAL</strong><small>Video standard — cold reset</small></span>
         </button>
       </section>
     </div>

@@ -69,6 +69,9 @@ const unapiRelayStateEl = $("unapiRelayState");
 const unapiRelayStateWrapEl = unapiRelayStateEl.closest(".relay-state");
 const unapiRelayLampEl = $("unapiRelayLamp");
 const unapiCertificateEl = $("unapiCertificate");
+const videoStandardButtons = [
+  ...document.querySelectorAll("[data-video-standard-toggle]"),
+];
 const unapiApi = globalThis.JS1983Unapi;
 const unapiBridge = globalThis.JS1983UnapiBridge;
 const ctx = canvas.getContext("2d");
@@ -117,6 +120,7 @@ const POWERGRAPH_OUTPUT_STORAGE_KEY =
 const UNAPI_STORAGE_KEY = "javascript1983.expansion.unapi";
 const UNAPI_ENDPOINT_STORAGE_KEY = "javascript1983.expansion.unapiEndpoint";
 const RAM_STORAGE_PREFIX = "javascript1983.machine.ram.";
+const VIDEO_STANDARD_STORAGE_KEY = "javascript1983.machine.videoStandard";
 let sunriseEnabled = false;
 let ideAccessMode = "readonly";
 let scsiEnabled = false;
@@ -131,6 +135,7 @@ let powergraphOutputMode = "auto";
 let unapiEnabled = false;
 let unapiEndpoint = unapiBridge ? unapiBridge.endpoint : "";
 let unapiCertificateUrl = "";
+let videoStandard = "pal";
 let applySunriseHardware = () => {};
 let applyScsiHardware = () => {};
 let applyScsiTargetHardware = () => {};
@@ -165,6 +170,8 @@ try {
   unapiEnabled = localStorage.getItem(UNAPI_STORAGE_KEY) === "true";
   const storedEndpoint = localStorage.getItem(UNAPI_ENDPOINT_STORAGE_KEY);
   if (storedEndpoint !== null) unapiEndpoint = storedEndpoint;
+  if (localStorage.getItem(VIDEO_STANDARD_STORAGE_KEY) === "ntsc")
+    videoStandard = "ntsc";
 } catch (_) {
   // Keep optional hardware disconnected when storage is unavailable.
 }
@@ -176,6 +183,21 @@ function updateExpansionIndicator() {
       unapiEnabled
   );
 }
+
+function updateVideoStandardUi() {
+  const ntsc = videoStandard === "ntsc";
+  const label = ntsc ? "NTSC" : "PAL";
+  const detail = ntsc ? "NTSC 60 Hz" : "PAL 50 Hz";
+  for (const button of videoStandardButtons) {
+    button.setAttribute("aria-pressed", String(ntsc));
+    button.setAttribute("aria-label", detail + "; activate to switch standard");
+    button.title = detail + " — activate to switch standard";
+    for (const name of button.querySelectorAll(".video-standard-name"))
+      name.textContent = label;
+  }
+}
+
+updateVideoStandardUi();
 
 const CARTRIDGE_EXTENSION_ORDER = [
   "Sunrise IDE", "MSX SCSI", "SD Mapper V2", "PowerGraph V9990",
@@ -723,7 +745,8 @@ function updatePixelMode() {
 function updateScreenModeReadout() {
   $("screenMode").textContent = frameW + " x " + frameH + " / " +
     (pixelSharp ? "Sharp" : "Smooth") + " / " +
-    (monochromeGreen ? "Green" : "Color");
+    (monochromeGreen ? "Green" : "Color") + " / " +
+    videoStandard.toUpperCase();
 }
 
 const DISPLAY_MODE_STORAGE_KEY = "javascript1983.displayMode";
@@ -775,6 +798,11 @@ try {
 setDisplayColorMode(savedDisplayMode === "green", false);
 
 create1983().then(m => {
+  const initialStandard = videoStandard === "ntsc" ? 1 : 0;
+  if (m._poc_set_video_standard(initialStandard) !== initialStandard) {
+    setStatus("Video standard initialization failed");
+    return;
+  }
   if (m._poc_init() !== 0) {
     setStatus("Emulator initialization failed");
     return;
@@ -1066,6 +1094,49 @@ create1983().then(m => {
 
   function updateFrameRateLabel() {
     frameRateLabelEl.textContent = "WASM / " + m._poc_frame_hz() + " HZ";
+  }
+
+  function applyVideoStandard(standard, persist = true, announce = true) {
+    const requested = standard === "ntsc" ? 1 : 0;
+
+    if (m._poc_set_video_standard(requested) !== requested)
+      return false;
+    videoStandard = m._poc_video_standard() === 1 ? "ntsc" : "pal";
+    if (persist) {
+      try {
+        localStorage.setItem(VIDEO_STANDARD_STORAGE_KEY, videoStandard);
+      } catch (_) {
+        // The running machine still keeps the selected standard.
+      }
+    }
+    updateVideoStandardUi();
+    framebufferPtr = m._poc_pixels();
+    frameW = m._poc_width();
+    frameH = m._poc_height();
+    resetAudioQueue();
+    frameClock.setRate(m._poc_frame_hz());
+    frameClock.reset();
+    releaseAllJoy();
+    releaseAllVirtualKeys();
+    updateFrameRateLabel();
+    updateScreenModeReadout();
+    setStatus(machineReadyStatus(currentModel) + " - " +
+      (videoStandard === "ntsc" ? "NTSC 60 Hz" : "PAL 50 Hz"));
+    if (announce)
+      showToast((videoStandard === "ntsc" ? "NTSC 60 Hz" : "PAL 50 Hz") +
+        " selected — machine cold reset");
+    canvas.focus();
+    return true;
+  }
+
+  for (const button of videoStandardButtons) {
+    button.addEventListener("click", () => {
+      const next = videoStandard === "pal" ? "ntsc" : "pal";
+      if (!applyVideoStandard(next)) {
+        setStatus("Video standard could not be changed");
+        showToast("Could not switch video standard");
+      }
+    });
   }
 
   function updateFloppyUi() {
