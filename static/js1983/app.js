@@ -1026,6 +1026,33 @@ create1983({
     }
   }
 
+  function releaseAllPhysicalKeys() {
+    for (const [scancode, mod] of heldKeys) {
+      if (!virtualKeys.has(scancode)) m._poc_key_mod(scancode, 0, mod);
+    }
+    heldKeys.clear();
+  }
+
+  function pasteClipboardText(text) {
+    if (!text) {
+      setStatus("Host clipboard is empty");
+      showToast("Host clipboard is empty");
+      return false;
+    }
+    releaseAllPhysicalKeys();
+    releaseAllVirtualKeys();
+    if (m.ccall("poc_paste_text", "number", ["string"], [text]) !== 0) {
+      setStatus("Could not paste clipboard text");
+      showToast("Could not paste clipboard text");
+      return false;
+    }
+    startAudio();
+    pulseInputLed();
+    setStatus("Pasting host clipboard into the MSX keyboard");
+    showToast("Pasting host clipboard");
+    return true;
+  }
+
   function virtualKeyButton(target) {
     return target.closest("button[data-scancode]");
   }
@@ -2426,11 +2453,31 @@ create1983({
   });
   canvas.addEventListener("contextmenu", event => event.preventDefault());
 
+  window.addEventListener("paste", event => {
+    if (document.activeElement !== canvas) return;
+    event.preventDefault();
+    const text = event.clipboardData
+      ? event.clipboardData.getData("text/plain")
+      : "";
+    pasteClipboardText(text);
+  });
+
   window.addEventListener("keydown", event => {
     if (event.ctrlKey && event.code === "Enter" &&
         document.pointerLockElement === canvas) {
       event.preventDefault();
       document.exitPointerLock();
+      return;
+    }
+    if ((event.ctrlKey || event.metaKey) && event.code === "KeyV" &&
+        document.activeElement === canvas) {
+      if (event.repeat) event.preventDefault();
+      else {
+        /* Leave the initial event's default action enabled so the browser
+         * emits its trusted paste event with clipboardData. */
+        releaseAllPhysicalKeys();
+        releaseAllVirtualKeys();
+      }
       return;
     }
     if (event.code === "F3" && !event.shiftKey &&
@@ -2484,10 +2531,7 @@ create1983({
     if (!virtualKeys.has(scancode)) m._poc_key_mod(scancode, 0, mod);
   });
   canvas.addEventListener("blur", () => {
-    for (const [scancode, mod] of heldKeys) {
-      if (!virtualKeys.has(scancode)) m._poc_key_mod(scancode, 0, mod);
-    }
-    heldKeys.clear();
+    releaseAllPhysicalKeys();
   });
 
   for (const eventName of ["dragenter", "dragover"]) {
