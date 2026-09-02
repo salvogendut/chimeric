@@ -72,6 +72,8 @@ const unapiCertificateEl = $("unapiCertificate");
 const videoStandardButtons = [
   ...document.querySelectorAll("[data-video-standard-toggle]"),
 ];
+const appScriptUrl = new URL(document.currentScript.src, document.baseURI);
+const assetRevision = appScriptUrl.searchParams.get("v") || "";
 const unapiApi = globalThis.JS1983Unapi;
 const unapiBridge = globalThis.JS1983UnapiBridge;
 const ctx = canvas.getContext("2d");
@@ -194,10 +196,23 @@ function updateVideoStandardUi() {
     button.title = detail + " — activate to switch standard";
     for (const name of button.querySelectorAll(".video-standard-name"))
       name.textContent = label;
+    for (const frequency of button.querySelectorAll(".video-standard-hz"))
+      frequency.textContent = ntsc ? "60 Hz" : "50 Hz";
   }
 }
 
 updateVideoStandardUi();
+
+let requestVideoStandardToggle = () => {
+  setStatus("Video standard control is waiting for the emulator");
+  showToast("The emulator is still starting");
+};
+for (const button of videoStandardButtons) {
+  button.addEventListener("click", event => {
+    event.preventDefault();
+    requestVideoStandardToggle();
+  });
+}
 
 const CARTRIDGE_EXTENSION_ORDER = [
   "Sunrise IDE", "MSX SCSI", "SD Mapper V2", "PowerGraph V9990",
@@ -797,7 +812,14 @@ try {
 }
 setDisplayColorMode(savedDisplayMode === "green", false);
 
-create1983().then(m => {
+create1983({
+  locateFile(path) {
+    if (!assetRevision) return path;
+    const url = new URL(path, document.baseURI);
+    url.searchParams.set("v", assetRevision);
+    return url.href;
+  },
+}).then(m => {
   const initialStandard = videoStandard === "ntsc" ? 1 : 0;
   if (m._poc_set_video_standard(initialStandard) !== initialStandard) {
     setStatus("Video standard initialization failed");
@@ -1129,15 +1151,13 @@ create1983().then(m => {
     return true;
   }
 
-  for (const button of videoStandardButtons) {
-    button.addEventListener("click", () => {
-      const next = videoStandard === "pal" ? "ntsc" : "pal";
-      if (!applyVideoStandard(next)) {
-        setStatus("Video standard could not be changed");
-        showToast("Could not switch video standard");
-      }
-    });
-  }
+  requestVideoStandardToggle = () => {
+    const next = videoStandard === "pal" ? "ntsc" : "pal";
+    if (!applyVideoStandard(next)) {
+      setStatus("Video standard could not be changed");
+      showToast("Could not switch video standard");
+    }
+  };
 
   function updateFloppyUi() {
     const available = Boolean(m._poc_has_floppy());

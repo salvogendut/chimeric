@@ -427,8 +427,6 @@ html[data-theme="sonyhb-f1xd"] .trinitron-power {
   justify-items: center;
 }
 
-html[data-theme="sonyhb-f1xd"] .video-standard-deck-key { display: none; }
-
 html[data-theme="sonyhb-f1xd"] .trinitron-power i {
   position: relative;
   display: block;

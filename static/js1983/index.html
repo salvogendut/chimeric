@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#121416">
 <title>Javascript 1983</title>
-<link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="theme-retro-crt.css">
-<link rel="stylesheet" href="theme-sapporo.css">
-<link rel="stylesheet" href="theme-sapporo-dark.css">
-<link rel="stylesheet" href="theme-sonyhb-f1xd.css">
+<link rel="stylesheet" href="styles.css?v=9aedc4ecff57c9db">
+<link rel="stylesheet" href="theme-retro-crt.css?v=9aedc4ecff57c9db">
+<link rel="stylesheet" href="theme-sapporo.css?v=9aedc4ecff57c9db">
+<link rel="stylesheet" href="theme-sapporo-dark.css?v=9aedc4ecff57c9db">
+<link rel="stylesheet" href="theme-sonyhb-f1xd.css?v=9aedc4ecff57c9db">
 </head>
 <body>
 <div id="expansionBackdrop" class="expansion-backdrop" aria-hidden="true"></div>
@@ -369,9 +369,17 @@
           <div id="screenHint" class="screen-hint">Click display for keyboard</div>
           <div id="dropHint" class="drop-hint">Drop ROM, DSK or CAS media here</div>
         </div>
-        <div class="screen-badge">
+        <div class="screen-badge" aria-label="Monitor controls">
           <span>MSX monitor</span>
-          <span id="screenMode">Sharp / Color</span>
+          <span class="screen-badge-readouts">
+            <span id="screenMode">Sharp / Color</span>
+            <button class="monitor-standard-key" type="button"
+                    data-video-standard-toggle aria-pressed="false"
+                    title="Switch between PAL and NTSC">
+              <span class="video-standard-name">PAL</span>
+              <small class="video-standard-hz">50 Hz</small>
+            </button>
+          </span>
         </div>
         <div class="trinitron-console" aria-label="Monitor controls">
           <div class="trinitron-switches" aria-hidden="true">
@@ -539,11 +547,6 @@
           <i class="mode-lamp" aria-hidden="true"></i>
           <span><strong id="colorModeName">Color display</strong><small>Switch to green monochrome</small></span>
         </button>
-        <button class="wide-key video-standard-deck-key" type="button"
-                data-video-standard-toggle aria-pressed="false">
-          <i class="standard-lamp" aria-hidden="true"></i>
-          <span><strong class="video-standard-name">PAL</strong><small>Video standard — cold reset</small></span>
-        </button>
       </section>
     </div>
 
@@ -676,13 +679,13 @@
 </main>
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
-<script src="audio-scheduler.js"></script>
-<script src="gamepad.js"></script>
-<script src="hardware-ui.js"></script>
-<script src="media-url.js"></script>
-<script src="unapi-relay-protocol.js"></script>
-<script src="unapi-bridge.js"></script>
-<script src="1983.js"></script>
-<script src="app.js"></script>
+<script src="audio-scheduler.js?v=9aedc4ecff57c9db"></script>
+<script src="gamepad.js?v=9aedc4ecff57c9db"></script>
+<script src="hardware-ui.js?v=9aedc4ecff57c9db"></script>
+<script src="media-url.js?v=9aedc4ecff57c9db"></script>
+<script src="unapi-relay-protocol.js?v=9aedc4ecff57c9db"></script>
+<script src="unapi-bridge.js?v=9aedc4ecff57c9db"></script>
+<script src="1983.js?v=9aedc4ecff57c9db"></script>
+<script src="app.js?v=9aedc4ecff57c9db"></script>
 </body>
 </html>
