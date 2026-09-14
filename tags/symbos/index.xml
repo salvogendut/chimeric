@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>SymbOS on Chimeric</title>
+		<link>https://salvogendut.github.io/chimeric/tags/symbos/</link>
+		<description>Recent content in SymbOS on Chimeric</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 20 Aug 2026 23:40:12 +0200</lastBuildDate>
+		
+			<atom:link href="https://salvogendut.github.io/chimeric/tags/symbos/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Browsing the Internet on SymbOS</title>
+				<link>https://salvogendut.github.io/chimeric/posts/browsing-the-internet-on-symbos/</link>
+				<pubDate>Thu, 20 Aug 2026 23:40:12 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/browsing-the-internet-on-symbos/</guid>
+				<description>&lt;p&gt;Browsing the modern Internet from an 8-bit computer is no small feat. &lt;strong&gt;SymZilla&lt;/strong&gt; was originally developed by SymbOS’s Prodatron as a document viewer. My contribution was to add networking and support for displaying simplified HTML pages, helping bring web browsing to &lt;a href=&#34;https://symbos.org/&#34;&gt;SymbOS&lt;/a&gt; on classic machines.&lt;/p&gt;&#xA;&lt;p&gt;The browser relies on &lt;a href=&#34;https://github.com/salvogendut/GB-proxy&#34;&gt;GB-proxy&lt;/a&gt;, a companion proxy designed to reduce the complexity of today’s web. GB-proxy retrieves pages on behalf of the client, handles SSL/TLS connections, strips pages down to a simpler form of HTML, and shrinks and converts images into a format SymbOS can display. This lets the browser concentrate on presenting a practical, lightweight version of the web within the limits of the platform.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Tags on Chimeric</title>
+		<link>https://salvogendut.github.io/chimeric/tags/</link>
+		<description>Recent content in Tags on Chimeric</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 20 Aug 2026 23:40:12 +0200</lastBuildDate>
+		
+			<atom:link href="https://salvogendut.github.io/chimeric/tags/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Amstrad CPC</title>
+				<link>https://salvogendut.github.io/chimeric/tags/amstrad-cpc/</link>
+				<pubDate>Thu, 20 Aug 2026 23:40:12 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/amstrad-cpc/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>MSX</title>
+				<link>https://salvogendut.github.io/chimeric/tags/msx/</link>
+				<pubDate>Thu, 20 Aug 2026 23:40:12 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/msx/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Retrocomputing</title>
+				<link>https://salvogendut.github.io/chimeric/tags/retrocomputing/</link>
+				<pubDate>Thu, 20 Aug 2026 23:40:12 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/retrocomputing/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>SymbOS</title>
+				<link>https://salvogendut.github.io/chimeric/tags/symbos/</link>
+				<pubDate>Thu, 20 Aug 2026 23:40:12 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/symbos/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>SymZilla</title>
+				<link>https://salvogendut.github.io/chimeric/tags/symzilla/</link>
+				<pubDate>Thu, 20 Aug 2026 23:40:12 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/symzilla/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Web Browser</title>
+				<link>https://salvogendut.github.io/chimeric/tags/web-browser/</link>
+				<pubDate>Thu, 20 Aug 2026 23:40:12 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/web-browser/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Arduino</title>
+				<link>https://salvogendut.github.io/chimeric/tags/arduino/</link>
+				<pubDate>Wed, 19 Aug 2026 21:42:06 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/arduino/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Hardware</title>
+				<link>https://salvogendut.github.io/chimeric/tags/hardware/</link>
+				<pubDate>Wed, 19 Aug 2026 21:42:06 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/hardware/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Mouse</title>
+				<link>https://salvogendut.github.io/chimeric/tags/mouse/</link>
+				<pubDate>Wed, 19 Aug 2026 21:42:06 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/mouse/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Omega MSX</title>
+				<link>https://salvogendut.github.io/chimeric/tags/omega-msx/</link>
+				<pubDate>Wed, 19 Aug 2026 21:35:45 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/omega-msx/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Repair</title>
+				<link>https://salvogendut.github.io/chimeric/tags/repair/</link>
+				<pubDate>Wed, 19 Aug 2026 21:35:45 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/repair/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>1984</title>
+				<link>https://salvogendut.github.io/chimeric/tags/1984/</link>
+				<pubDate>Tue, 11 Aug 2026 08:28:03 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/1984/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Emulation</title>
+				<link>https://salvogendut.github.io/chimeric/tags/emulation/</link>
+				<pubDate>Tue, 11 Aug 2026 08:28:03 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/emulation/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Javascript</title>
+				<link>https://salvogendut.github.io/chimeric/tags/javascript/</link>
+				<pubDate>Tue, 11 Aug 2026 08:28:03 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/javascript/</guid>
+				<description></description>
+			</item>
+			<item>
+				<title>Webassembly</title>
+				<link>https://salvogendut.github.io/chimeric/tags/webassembly/</link>
+				<pubDate>Tue, 11 Aug 2026 08:28:03 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/tags/webassembly/</guid>
+				<description></description>
+			</item>
+	</channel>
+</rss>
