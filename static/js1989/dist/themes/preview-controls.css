@@ -1,0 +1,47 @@
+/* Adapt the shared 1984 skins to the preview's media and keyboard controls. */
+html:not([data-theme="next"]) .media-panel {
+  background: var(--panel);
+  border-color: var(--panel-edge);
+}
+html:not([data-theme="next"]) .media-slot {
+  border: 0;
+  border-top: 1px solid var(--panel-edge);
+  background: transparent;
+}
+html:not([data-theme="next"]) .keyboard-panel {
+  background: var(--panel-deep);
+  border-color: var(--panel-edge);
+}
+html:not([data-theme="next"]) .key {
+  background: var(--panel);
+  color: var(--ink);
+  border-color: var(--panel-edge);
+}
+html:not([data-theme="next"]) .key:hover,
+html:not([data-theme="next"]) .key[aria-pressed="true"] {
+  background: var(--metal-dark);
+}
+html:not([data-theme="next"]) .keyboard-topline,
+html:not([data-theme="next"]) .keyboard-topline b,
+html:not([data-theme="next"]) .keyboard-topline output,
+html:not([data-theme="next"]) .key small {
+  color: var(--muted);
+}
+html[data-theme="sapporo"] .machine-caption,
+html[data-theme="sapporo"] .machine-toolbar,
+html[data-theme="sapporo"] .page-footer,
+html[data-theme="sapporo"] .preview-badge {
+  --ink: #111415;
+  --muted: #505655;
+  color: var(--muted);
+}
+html[data-theme="sapporo"] #fullscreen { color: #111415; }
+html[data-theme="sapporo-dark"] #fullscreen { color: #002b36; }
+
+@media (max-width: 760px) {
+  html:not([data-theme="next"]) .masthead { margin-inline: 0; }
+  html:not([data-theme="next"]) .brand-lockup h1 { font-size: 19px; }
+  html:not([data-theme="next"]) .brand-lockup h1 strong { padding-inline: 5px; margin-left: 2px; }
+  html:not([data-theme="next"]) .brand-mark { display: none; }
+  html:not([data-theme="next"]) .theme-button { gap: 5px; padding-inline: 5px; }
+}
