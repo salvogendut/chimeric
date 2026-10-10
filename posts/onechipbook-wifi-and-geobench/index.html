@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>onechipbook wifi and GEOBENCH :: Chimeric</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Photos GEOBENCH browser
+GEOBENCH telnet
+I recently updated the ESP-01S Wi-Fi module inside my OneChipBook. The firmware and tools I used came from the links in Oduvaldo Pavan Junior&rsquo;s YouTube video:
+Oduvaldo Pavan Junior&rsquo;s OneChipBook ESP8266 video The package included Espressif&rsquo;s Windows Flash Download Tool, but I did not use it in the end. The current .exe did not run correctly on my Windows 7 machine, so I flashed the ESP-01S directly from Linux using Espressif&rsquo;s command-line tool, esptool.py. You will also need the correct firmware from here, as the one in the video has a problem where it won&rsquo;t save the WiFi settings:
+" />
+<meta name="keywords" content="" />
+
+  <meta name="robots" content="noodp" />
+
+<link rel="canonical" href="https://salvogendut.github.io/chimeric/posts/onechipbook-wifi-and-geobench/" />
+
+
+
+
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/code.min.c4581949edab7810737609fc5568852bcd908945f14561e366dcd2300a370545.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/fonts.min.5bb7ed13e1d00d8ff39ea84af26737007eb5051b157b86fc24487c94f3dc8bbe.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/footer.min.eb8dfc2c6a7eafa36cd3ba92d63e69e849e2200e0002a228d137f236b09ecd75.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/gist.min.a751e8b0abe1ba8bc53ced52a38b19d8950fe78ca29454ea8c2595cf26aad5c0.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/header.min.75c7eb0e2872d95ff48109c6647d0223a38db52e2561dd87966eb5fc7c6bdac6.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/main.min.36833afd348409fc6c3d09d0897c5833d9d5bf1ff31f5e60ea3ee42ce2b1268c.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/menu.min.3c17467ebeb3d38663dce68f71f519901124fa5cbb4519b2fb0667a21e9aca39.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/pagination.min.bbb986dbce00a5ce5aca0504b7925fc1c581992a4bf57f163e5d69cc1db7d836.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/post.min.e6dddd258e64c83e05cec0cd49c05216742d42fc8ecbfbe6b67083412b609bd3.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/syntax.min.a2cc694a9b481f15d41722bffc2cc54eea4c4f74fd9072b0b33253604c22606e.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/terminal.min.50c1c942103c94ef5432d9afaa80aa682032f33887783e3118cfa9ac29b946be.css">
+
+  
+  <link rel="stylesheet" href="https://salvogendut.github.io/chimeric/css/terms.min.b81791663c3790e738e571cdbf802312390d30e4b1d8dc9d814a5b5454d0ac11.css">
+
+
+
+
+
+
+
+<link rel="shortcut icon" href="https://salvogendut.github.io/chimeric/favicon.png">
+<link rel="apple-touch-icon" href="https://salvogendut.github.io/chimeric/apple-touch-icon.png">
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="onechipbook wifi and GEOBENCH">
+<meta property="og:description" content="Photos GEOBENCH browser
+GEOBENCH telnet
+I recently updated the ESP-01S Wi-Fi module inside my OneChipBook. The firmware and tools I used came from the links in Oduvaldo Pavan Junior&rsquo;s YouTube video:
+Oduvaldo Pavan Junior&rsquo;s OneChipBook ESP8266 video The package included Espressif&rsquo;s Windows Flash Download Tool, but I did not use it in the end. The current .exe did not run correctly on my Windows 7 machine, so I flashed the ESP-01S directly from Linux using Espressif&rsquo;s command-line tool, esptool.py. You will also need the correct firmware from here, as the one in the video has a problem where it won&rsquo;t save the WiFi settings:
+" />
+<meta property="og:url" content="https://salvogendut.github.io/chimeric/posts/onechipbook-wifi-and-geobench/" />
+<meta property="og:site_name" content="Chimeric" />
+
+  <meta property="og:image" content="https://salvogendut.github.io/chimeric/og-image.png">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+
+
+  <meta property="article:published_time" content="2026-07-22 20:37:56 &#43;0200 CEST" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+
+
+<div class="container">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="https://salvogendut.github.io/chimeric/">
+  <div class="logo">
+    Terminal
+  </div>
+</a>
+
+    </div>
+    
+    
+  </div>
+  
+</header>
+
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="https://salvogendut.github.io/chimeric/posts/onechipbook-wifi-and-geobench/">onechipbook wifi and GEOBENCH</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2026-07-22</time></div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <h2 id="photos">Photos<a href="#photos" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p><img src="https://salvogendut.github.io/chimeric/images/20260722_194203.jpg" alt="GEOBENCH browser">
+<em>GEOBENCH browser</em></p>
+<p><img src="https://salvogendut.github.io/chimeric/images/20260722_194021.jpg" alt="GEOBENCH telnet">
+<em>GEOBENCH telnet</em></p>
+<p>I recently updated the ESP-01S Wi-Fi module inside my OneChipBook. The firmware and tools I used came from the links in Oduvaldo Pavan Junior&rsquo;s YouTube video:</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=uoaiEamWUUg">Oduvaldo Pavan Junior&rsquo;s OneChipBook ESP8266 video</a></li>
+</ul>
+<p>The package included Espressif&rsquo;s Windows Flash Download Tool, but I did not use it in the end. The current <code>.exe</code> did not run correctly on my Windows 7 machine, so I flashed the ESP-01S directly from Linux using Espressif&rsquo;s command-line tool, <a href="https://docs.espressif.com/projects/esptool/en/latest/esp8266/"><code>esptool.py</code></a>.
+You will also need the correct firmware from here, as the one in the video has a problem where it won&rsquo;t save the WiFi settings:</p>
+<ul>
+<li><a href="https://github.com/ducasp/MSX-Development/releases/download/ESPFW1.4/OCM-SM.UNAPI.PACK.1.5.zip"> Oduvaldo Pavan Junior&rsquo;s OneChipBook ESP8266 firmware</a></li>
+</ul>
+<h2 id="opening-the-onechipbook">Opening the OneChipBook<a href="#opening-the-onechipbook" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>To access the ESP-01S module, the OneChipBook has to be opened from the bottom.</p>
+<p>There are several screws on the underside of the machine. Most of them are hidden under the laptop&rsquo;s rubber feet, so the feet need to be removed first. After the screws are out, the bottom shell can be opened carefully.</p>
+<p>The ESP-01S module is easy to identify once inside. There is only one practical way it can be plugged in: the module covers the connector next to it, and it cannot realistically be inserted backwards because it would stick out into the cartridge insertion area.</p>
+<h2 id="checking-the-esp8266">Checking the ESP8266<a href="#checking-the-esp8266" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>With the ESP-01S connected to a USB programmer in <code>PROG</code> mode, I first checked that the chip was detected:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo python3 -m esptool --chip esp8266 --port /dev/ttyUSB0 chip_id
+</span></span></code></pre></div><p>This reported an ESP8266EX with a 26 MHz crystal:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Chip type:          ESP8266EX
+</span></span><span style="display:flex;"><span>Crystal frequency:  26MHz
+</span></span></code></pre></div><h2 id="backing-up-the-original-firmware">Backing Up the Original Firmware<a href="#backing-up-the-original-firmware" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Before writing anything, I made a full backup of the original 1 MB flash:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo python3 -m esptool <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --chip esp8266 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --port /dev/ttyUSB0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --baud <span style="color:#ae81ff">115200</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  read_flash 0x00000 0x100000 esp01s-backup.bin
+</span></span></code></pre></div><p>The resulting backup file should be exactly 1,048,576 bytes.</p>
+<h2 id="flashing-the-new-firmware">Flashing the New Firmware<a href="#flashing-the-new-firmware" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>The firmware package had two binary files:</p>
+<ul>
+<li>fw.bin at offset 0x00000</li>
+<li>certs.bin at offset 0x0bb000</li>
+</ul>
+<p>The required flash settings were:</p>
+<ul>
+<li>Crystal frequency: 26M</li>
+<li>SPI speed: 40 MHz</li>
+<li>SPI mode: QIO</li>
+<li>Flash size: 8 Mbit, which is 1 MB</li>
+</ul>
+<p>The final flashing command was:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo python3 -m esptool <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --chip esp8266 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --port /dev/ttyUSB0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --baud <span style="color:#ae81ff">115200</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  write-flash <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --flash-freq 40m <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --flash-mode qio <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --flash-size 1MB <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  0x00000 fw.bin <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  0x0bb000 certs.bin
+</span></span></code></pre></div><p>After flashing, I switched the programmer back from PROG mode to UART mode and reinstalled the ESP-01S in the OneChipBook.</p>
+<h2 id="prepare-sdcard">Prepare SDCARD<a href="#prepare-sdcard" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>You need to copy all the files in the &ldquo;OCM-SM.UNAPI.PACK.1.5/TO SDCARD ROOT (RAIZ CARTAO SD) RAM&rdquo; folder to the root of your SDCARD (Format it to FAT16 first)
+and of course, you will need to already have the necessary files to boot MSXDOS in it</p>
+<h2 id="first-boot">First Boot<a href="#first-boot" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>After powering on the OneChipBook, I saw several messages indicating that the ESP8266 firmware was being loaded.</p>
+<p>At first I could not find where the Wi-Fi configuration was supposed to be set. The useful tool turned out to be:</p>
+<p>CFG8266.COM</p>
+<p>Running CFG8266.COM scans for nearby Wi-Fi access points and allows the OneChipBook to connect to one.
+You may want to also adjust the time server and timezone to reflect your area in AUTOEXE2.BAT</p>
+<h2 id="testing-unapi-networking">Testing UNAPI Networking<a href="#testing-unapi-networking" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>I also tested GEOBENCH&rsquo;s newly finished UNAPI compatibility. It worked out of the box.</p>
+<p>Using GEOBENCH&rsquo;s browser, I was able to browse to:</p>
+<ul>
+<li><a href="http://frogfind.au">frogfind.au</a></li>
+</ul>
+<p>I was also able to telnet to Aardwolf using the Telnet app:</p>
+<ul>
+<li><a href="https://www.aardwolf.com/">Aardwolf MUD</a></li>
+<li><a href="https://msxhub.com/TELNET">MSXHub TELNET package</a></li>
+</ul>
+<p>GEOBENCH project links:</p>
+<ul>
+<li><a href="https://github.com/salvogendut/geobench">GEOBENCH project</a></li>
+</ul>
+<p>This confirmed that the flashed ESP-01S firmware, the OneChipBook Wi-Fi interface, and the UNAPI networking stack were all working together successfully.</p>
+
+      </div></div>
+
+  
+
+  
+    
+
+  
+</article>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2026 Powered by <a href="https://gohugo.io">Hugo</a></span>
+    
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+
+
+
+
+
+<script type="text/javascript" src="https://salvogendut.github.io/chimeric/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

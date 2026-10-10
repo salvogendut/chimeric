@@ -1,0 +1,36 @@
+/* Emscripten's POSIX/libc capabilities. Independent of native configure output. */
+#pragma once
+#define PACKAGE_NAME "1989"
+#define PACKAGE "1989"
+#define BIN2DATADIR "/"
+#define ENABLE_DSP_EMU 1
+#define ENABLE_TRACING 1
+#define HAVE_ALPHASORT 1
+#define HAVE_SCANDIR 1
+#define HAVE_STRERROR 1
+#define HAVE_STRDUP 1
+#define HAVE_STRINGS_H 1
+#define HAVE_STRING_H 1
+#define HAVE_STDINT_H 1
+#define HAVE_INTTYPES_H 1
+#define HAVE_STDIO_H 1
+#define HAVE_STDLIB_H 1
+#define HAVE_UNISTD_H 1
+#define HAVE_SYS_TYPES_H 1
+#define HAVE_SYS_STAT_H 1
+#define HAVE_SYS_TIME_H 1
+#define HAVE_SYS_SELECT_H 1
+#define HAVE_SYS_IOCTL_H 1
+#define HAVE_SYS_WAIT_H 1
+#define HAVE_UTIME_H 1
+#define HAVE_ARPA_INET_H 1
+#define HAVE_NETINET_IN_H 1
+#define HAVE_GETTIMEOFDAY 1
+#define HAVE_NANOSLEEP 1
+#define HAVE_SETENV 1
+#define HAVE_SELECT 1
+#define HAVE_FSEEKO 1
+#define HAVE_FTELLO 1
+#define HAVE_POSIX_MEMALIGN 1
+#define HAVE_ALIGNED_ALLOC 1
+#define HAVE_STRUCT_DIRENT_D_TYPE 1

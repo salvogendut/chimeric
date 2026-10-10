@@ -1,0 +1,165 @@
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  root.JS1983Media = api;
+}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  function resolveHttpUrl(value, baseUrl, parameter) {
+    if (!value) return null;
+    let url;
+    try {
+      url = new URL(value, baseUrl);
+    } catch (_) {
+      throw new Error(parameter + ' is not a valid URL');
+    }
+    if (url.protocol !== 'http:' && url.protocol !== 'https:')
+      throw new Error(parameter + ' must use HTTP or HTTPS');
+    return url.href;
+  }
+
+  function validateAutorun(value) {
+    if (!value) return null;
+    if (value.length > 240 || /[\x00-\x1f\x7f"]/.test(value))
+      throw new Error('autorun contains unsupported characters');
+    return value;
+  }
+
+  function validateMachine(value) {
+    if (value === null) return null;
+    const machine = value.trim().toLowerCase();
+    if (machine === 'msx1' || machine === 'cbios') return 0;
+    if (machine === 'nms8250' || machine === 'philips') return 1;
+    if (machine === 'omega' || machine === 'omega-msx2' || machine === 'msx2')
+      return 2;
+    throw new Error('machine must be msx1, omega-msx2, or nms8250');
+  }
+
+  function validateExtensions(params) {
+    if (!params.has('extensions')) return null;
+    const value = params.get('extensions').trim();
+    if (!value) return [];
+    const supported = new Set([
+      'sunrise', 'scsi', 'sdmapper', 'powergraph', 'unapi'
+    ]);
+    const extensions = [];
+    for (const item of value.split(',')) {
+      const extension = item.trim().toLowerCase();
+      if (!supported.has(extension))
+        throw new Error('unsupported extension: ' + (extension || '(empty)'));
+      if (!extensions.includes(extension)) extensions.push(extension);
+    }
+    return extensions;
+  }
+
+  function validateSdMode(value, hasImage) {
+    if (value === null) return null;
+    if (!hasImage) throw new Error('sdmode requires an sda or sdb URL');
+    if (value !== 'readonly' && value !== 'readwrite')
+      throw new Error('sdmode must be readonly or readwrite');
+    return value;
+  }
+
+  function validateIdeMode(value, hasImage) {
+    if (value === null) return null;
+    if (!hasImage) throw new Error('idemode requires an ide URL');
+    if (value !== 'readonly' && value !== 'readwrite')
+      throw new Error('idemode must be readonly or readwrite');
+    return value;
+  }
+
+  function validateScsiMode(value, hasImage) {
+    if (value === null) return null;
+    if (!hasImage) throw new Error('scsimode requires a scsi URL');
+    if (value !== 'readonly' && value !== 'readwrite')
+      throw new Error('scsimode must be readonly or readwrite');
+    return value;
+  }
+
+  function validateScsiTargetId(value) {
+    if (value === null) return null;
+    if (!/^[0-6]$/.test(value))
+      throw new Error('scsiid must be an integer from 0 through 6');
+    return Number(value);
+  }
+
+  function parseStartupMedia(search, baseUrl) {
+    const params = new URLSearchParams(search || '');
+    const media = {
+      machine: validateMachine(
+        params.has('machine') ? params.get('machine') : null
+      ),
+      unifiedRom: resolveHttpUrl(
+        params.get('unifiedrom'), baseUrl, 'unifiedrom'
+      ),
+      disk: resolveHttpUrl(params.get('disk'), baseUrl, 'disk'),
+      cartridge: resolveHttpUrl(params.get('cartridge'), baseUrl, 'cartridge'),
+      cartridge2: resolveHttpUrl(params.get('cartridge2'), baseUrl, 'cartridge2'),
+      ide: resolveHttpUrl(params.get('ide'), baseUrl, 'ide'),
+      scsiRom: resolveHttpUrl(params.get('scsirom'), baseUrl, 'scsirom'),
+      scsi: resolveHttpUrl(params.get('scsi'), baseUrl, 'scsi'),
+      sdA: resolveHttpUrl(params.get('sda'), baseUrl, 'sda'),
+      sdB: resolveHttpUrl(params.get('sdb'), baseUrl, 'sdb'),
+      extensions: validateExtensions(params),
+      autorun: validateAutorun(params.get('autorun')),
+    };
+    media.sdMode = validateSdMode(
+      params.has('sdmode') ? params.get('sdmode').trim().toLowerCase() : null,
+      Boolean(media.sdA || media.sdB)
+    );
+    media.ideMode = validateIdeMode(
+      params.has('idemode') ? params.get('idemode').trim().toLowerCase() : null,
+      Boolean(media.ide)
+    );
+    media.scsiMode = validateScsiMode(
+      params.has('scsimode')
+        ? params.get('scsimode').trim().toLowerCase() : null,
+      Boolean(media.scsi)
+    );
+    media.scsiTargetId = validateScsiTargetId(
+      params.has('scsiid') ? params.get('scsiid').trim() : null
+    );
+    if (media.scsi && !media.scsiRom)
+      throw new Error('scsi requires a scsirom URL');
+    if (media.extensions && media.extensions.includes('scsi') && !media.scsiRom)
+      throw new Error('the scsi extension requires a scsirom URL');
+    if (media.autorun && !media.disk)
+      throw new Error('autorun requires a disk URL');
+    return media;
+  }
+
+  function resolveStartupExtensions(media, current = {}) {
+    let sunrise = Boolean(current.sunrise);
+    let scsi = Boolean(current.scsi);
+    let sdMapper = Boolean(current.sdMapper);
+    let powergraph = Boolean(current.powergraph);
+    let unapi = Boolean(current.unapi);
+    if (media.extensions !== null) {
+      sunrise = media.extensions.includes('sunrise');
+      scsi = media.extensions.includes('scsi');
+      sdMapper = media.extensions.includes('sdmapper');
+      powergraph = media.extensions.includes('powergraph');
+      unapi = media.extensions.includes('unapi');
+    }
+    if (media.ide) sunrise = true;
+    if (media.scsiRom || media.scsi) scsi = true;
+    if (media.sdA || media.sdB) sdMapper = true;
+    if ([sunrise, scsi, sdMapper, powergraph].filter(Boolean).length > 2)
+      throw new Error('only two cartridge extensions can be enabled');
+    return { sunrise, scsi, sdMapper, powergraph, unapi };
+  }
+
+  function filenameFromUrl(value, fallback) {
+    if (!value) return fallback;
+    const path = new URL(value).pathname;
+    const encoded = path.slice(path.lastIndexOf('/') + 1);
+    if (!encoded) return fallback;
+    try {
+      return decodeURIComponent(encoded);
+    } catch (_) {
+      return encoded;
+    }
+  }
+
+  return { parseStartupMedia, resolveStartupExtensions, filenameFromUrl };
+}));
