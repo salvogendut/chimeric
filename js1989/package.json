@@ -1,0 +1,12 @@
+{
+  "name": "1989-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test-unit.js",
+    "test:browser": "node test-browser.js"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}

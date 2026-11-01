@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Retrocomputing on Chimeric</title>
+		<link>https://salvogendut.github.io/chimeric/tags/retrocomputing/</link>
+		<description>Recent content in Retrocomputing on Chimeric</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Thu, 20 Aug 2026 23:40:12 +0200</lastBuildDate>
+		
+			<atom:link href="https://salvogendut.github.io/chimeric/tags/retrocomputing/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Browsing the Internet on SymbOS</title>
+				<link>https://salvogendut.github.io/chimeric/posts/browsing-the-internet-on-symbos/</link>
+				<pubDate>Thu, 20 Aug 2026 23:40:12 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/browsing-the-internet-on-symbos/</guid>
+				<description>&lt;p&gt;Browsing the modern Internet from an 8-bit computer is no small feat. &lt;strong&gt;SymZilla&lt;/strong&gt; was originally developed by SymbOS’s Prodatron as a document viewer. My contribution was to add networking and support for displaying simplified HTML pages, helping bring web browsing to &lt;a href=&#34;https://symbos.org/&#34;&gt;SymbOS&lt;/a&gt; on classic machines.&lt;/p&gt;&#xA;&lt;p&gt;The browser relies on &lt;a href=&#34;https://github.com/salvogendut/GB-proxy&#34;&gt;GB-proxy&lt;/a&gt;, a companion proxy designed to reduce the complexity of today’s web. GB-proxy retrieves pages on behalf of the client, handles SSL/TLS connections, strips pages down to a simpler form of HTML, and shrinks and converts images into a format SymbOS can display. This lets the browser concentrate on presenting a practical, lightweight version of the web within the limits of the platform.&lt;/p&gt;</description>
+			</item>
+			<item>
+				<title>Smoke testing the Omega MSX</title>
+				<link>https://salvogendut.github.io/chimeric/posts/smoke-testing-the-omega-msx-2/</link>
+				<pubDate>Wed, 19 Aug 2026 21:35:45 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/smoke-testing-the-omega-msx-2/</guid>
+				<description>&lt;p&gt;After some initial setbacks, we are finally making progress with the Omega MSX.&lt;/p&gt;&#xA;&lt;p&gt;The first problem was a defective &lt;strong&gt;Yamaha 8139&lt;/strong&gt; chip, which prevented the system from booting at all. Once that was resolved, we were able to get the machine to display &lt;strong&gt;C-BIOS&lt;/strong&gt; and its diagnostic screens.&lt;/p&gt;&#xA;&lt;p&gt;That revealed a second fault: capacitor &lt;strong&gt;C64&lt;/strong&gt; was measuring only &lt;strong&gt;68 µF&lt;/strong&gt;, rather than its specified &lt;strong&gt;220 µF&lt;/strong&gt;. This was responsible for a strange yellow ghosting effect on the display.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Repair on Chimeric</title>
+		<link>https://salvogendut.github.io/chimeric/tags/repair/</link>
+		<description>Recent content in Repair on Chimeric</description>
+		<generator>Hugo</generator>
+		<language>en-us</language>
+		
+		
+		
+		
+			<lastBuildDate>Wed, 19 Aug 2026 21:35:45 +0200</lastBuildDate>
+		
+			<atom:link href="https://salvogendut.github.io/chimeric/tags/repair/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>Smoke testing the Omega MSX</title>
+				<link>https://salvogendut.github.io/chimeric/posts/smoke-testing-the-omega-msx-2/</link>
+				<pubDate>Wed, 19 Aug 2026 21:35:45 +0200</pubDate>
+				<guid>https://salvogendut.github.io/chimeric/posts/smoke-testing-the-omega-msx-2/</guid>
+				<description>&lt;p&gt;After some initial setbacks, we are finally making progress with the Omega MSX.&lt;/p&gt;&#xA;&lt;p&gt;The first problem was a defective &lt;strong&gt;Yamaha 8139&lt;/strong&gt; chip, which prevented the system from booting at all. Once that was resolved, we were able to get the machine to display &lt;strong&gt;C-BIOS&lt;/strong&gt; and its diagnostic screens.&lt;/p&gt;&#xA;&lt;p&gt;That revealed a second fault: capacitor &lt;strong&gt;C64&lt;/strong&gt; was measuring only &lt;strong&gt;68 µF&lt;/strong&gt;, rather than its specified &lt;strong&gt;220 µF&lt;/strong&gt;. This was responsible for a strange yellow ghosting effect on the display.&lt;/p&gt;</description>
+			</item>
+	</channel>
+</rss>
